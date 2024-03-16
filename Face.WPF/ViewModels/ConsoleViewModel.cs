@@ -79,7 +79,7 @@ namespace Face.WPF.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (ConsoleView.FlowDocument.Blocks.Count > 500)
+                if (ConsoleView.FlowDocument.Blocks.Count > 1000)
                 {
                     // 超过指定行数后，删除第一条日志，防止日志太多造成卡顿
                     ConsoleView.FlowDocument.Blocks.Remove(ConsoleView.FlowDocument.Blocks.FirstBlock);

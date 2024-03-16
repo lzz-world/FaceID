@@ -45,7 +45,7 @@ namespace Face.WPF.Models
         public static byte MID_INIT_ENCRYPTION = 0x50;
         public static byte MID_CONFIG_BAUDRATE = 0x51;
         public static byte MID_SET_RELEASE_ENC_KEY = 0x52;
-        public static byte MID_SET_DEBUG_ENC_KEY = 0x52;
+        public static byte MID_SET_DEBUG_ENC_KEY = 0x53;
         public static byte MID_GET_LOGFILE = 0x60;
         public static byte MID_UPLOAD_LOGFILE = 0x61;
         public static byte MID_SET_THRESHOLD_LEVEL = 0xD4;
@@ -126,7 +126,6 @@ namespace Face.WPF.Models
             [Description("模组在OTA模式")]
             MS_OTA = 4
         }
-
 
         //MID_NOTE Result
         public enum MID_NOTE_RES : byte

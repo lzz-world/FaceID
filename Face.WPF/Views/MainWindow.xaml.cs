@@ -22,6 +22,8 @@ namespace Face.WPF
         {
             InitializeComponent();
 
+            this.CloseBtn.Click += (s, e) => Application.Current.Shutdown();
+
             serialPort.ItemsSource = SerialPort.GetPortNames();
             baudRate.ItemsSource = new int[] { 110, 300, 600, 1200, 2400, 4800, 9600, 11440, 19200, 38400, 57600, 115200, 128000 }.Select(s =>s.ToString());
             parity.ItemsSource = Enum.GetNames(typeof(Parity));
@@ -36,6 +38,7 @@ namespace Face.WPF
         {
             Gl.closeVideo();
             Gl.MySerialPort?.Close();
+            Gl.MySerialPort?.Dispose();
         }
     }
 }

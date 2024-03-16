@@ -11,7 +11,11 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+
+
+
             <SolidColorBrush x:Key="BackgroupDefualt" Color="#fafafa"/>
+            <SolidColorBrush x:Key="BackgroupBrush" Color="#EEEEEE"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
