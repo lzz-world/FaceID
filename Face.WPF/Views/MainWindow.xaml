@@ -6,10 +6,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Face.WPF"
         xmlns:conv ="clr-namespace:ValueConverters;assembly=ValueConverters"
+        xmlns:dps ="clr-namespace:Face.WPF.Utils.DPropertys"
+        xmlns:view ="clr-namespace:Face.WPF.Views"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:wfi ="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-        xmlns:view ="clr-namespace:Face.WPF.Views"
         xmlns:vm ="clr-namespace:Face.WPF.ViewModels"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:drawing="clr-namespace:System.Drawing;assembly=netstandard"
@@ -17,11 +20,10 @@
         Topmost="True"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
-        AllowsTransparency="True"
         Closed="Window_Closed"
         ResizeMode="NoResize"
         Background="{StaticResource BackgroupDefualt}"
-        Title="MainWindow" Width="300">
+        Title="MainWindow" Width="330" Height="700">
     <WindowChrome.WindowChrome>
         <WindowChrome
             CaptionHeight="30"
@@ -39,6 +41,13 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
+        <Style x:Key="FaseInfoStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0 5 0 5" />
+            <Setter Property="FontWeight" Value="Light" />
+        </Style>
+
         <Style BasedOn="{StaticResource GroupBoxTab.Small}" TargetType="GroupBox" />
 
         <Style BasedOn="{StaticResource ButtonPrimary}" TargetType="Button" />
@@ -48,8 +57,7 @@
             TargetType="Button">
             <Setter Property="Content" Value="打 开" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="Margin" Value="40,5,40,0" />
-            <Setter Property="Margin" Value="0 3"/>
+            <Setter Property="Margin" Value="40 3"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=(vm:MainViewModel.IsConnect)}" Value="True">
                     <Setter Property="Content" Value="关 闭" />
@@ -69,94 +77,132 @@
         </Style>
         <conv:InverseBoolConverter x:Key="inverseBool" />
     </Window.Resources>
-    <DockPanel Margin="5,0,0,0">
-        <Grid DockPanel.Dock="Top">
-            <Grid.Resources>
+    <DockPanel Margin="5,0,0,0" Width="auto">
+        <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Right" Orientation="Horizontal">
+            <StackPanel.Resources>
                 <Style TargetType="Button">
                     <Setter Property="Background" Value="{StaticResource BackgroupDefualt}" />
                     <Setter Property="Width" Value="25" />
                     <Setter Property="Height" Value="25" />
+                    <Setter Property="Foreground" Value="Gray"/>
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
                 </Style>
-            </Grid.Resources>
-            <Button
-                x:Name="CloseBtn"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                BorderThickness="0"
-                Content="❌"
-                WindowChrome.IsHitTestVisibleInChrome="True" />
-        </Grid>
-        <Grid ShowGridLines="False">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="490" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <wfi:WindowsFormsHost
-                Grid.Column="1"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
-                <wf:PictureBox x:Name="videoBox" />
-            </wfi:WindowsFormsHost>
-            <StackPanel Grid.Column="0" Grid.RowSpan="2" Margin="0,0,0,5" AllowDrop="True">
-                <Expander Header="相机选择">
-                    <ListBox ItemsSource="{Binding VideoList}" SelectedIndex="{Binding VideoIndex}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding SwitchVideoCommand}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ListBox>
-                </Expander>
-                <Expander Header="图像旋转">
-                    <ListBox SelectedIndex="{Binding ImageRotateFlipIndex}">
-                        <ListBoxItem>无旋转无翻转</ListBoxItem>
-                        <ListBoxItem>旋转90°无翻转</ListBoxItem>
-                        <ListBoxItem>旋转180°无翻转</ListBoxItem>
-                        <ListBoxItem>旋转270°无翻转</ListBoxItem>
-                        <ListBoxItem>无旋转翻转X</ListBoxItem>
-                        <ListBoxItem>旋转90°翻转X</ListBoxItem>
-                        <ListBoxItem>旋转180°翻转X</ListBoxItem>
-                        <ListBoxItem>旋转270°翻转X</ListBoxItem>
-                    </ListBox>
-                </Expander>
-                <Expander Header="串口设置">
-                    <StackPanel Background="{StaticResource BackgroupBrush}">
-                        <Grid IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect), Converter={StaticResource inverseBool}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
+            </StackPanel.Resources>
+            <Button x:Name="SetBtn">
+                <iconPacks:BootstrapIcons Kind="Gear"/>
+            </Button>
+            <Button x:Name="CloseBtn">
+                <iconPacks:BootstrapIcons Kind="x" />
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Grid Width="320">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Image Width="60" Source="\Assets\Icon\Head2.png"/>
+                <TabControl Grid.Row="1" Style="{StaticResource TabControlStyle}" SelectedIndex="{Binding LoginTabIndex}"
+                            Background="Transparent" BorderBrush="Transparent" >
+                    <TabItem Header="人脸识别登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
+                        <StackPanel>
+                            <wfi:WindowsFormsHost HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <wf:PictureBox x:Name="videoBox"/>
+                            </wfi:WindowsFormsHost>
+                            <Grid Margin="0 10 0 0" ShowGridLines="False">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Style="{StaticResource FaseInfoStyle}" Text="ID :" Grid.Column="0" Grid.Row="0"/>
+                                <TextBlock Style="{StaticResource FaseInfoStyle}" Text="姓名 :" Grid.Column="0" Grid.Row="1"/>
+                                <TextBlock Style="{StaticResource FaseInfoStyle}" Text="部门 :" Grid.Column="0" Grid.Row="2"/>
+                                <TextBlock Text="{Binding UserInfo[0]}" Grid.Column="1" Grid.Row="0"/>
+                                <TextBlock Text="{Binding UserInfo[1]}" Grid.Column="1" Grid.Row="1"/>
+                                <TextBlock Text="{Binding UserInfo[2]}" Grid.Column="1" Grid.Row="2"/>
+                            </Grid>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem Header="账号密码登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
+                        <Grid ShowGridLines="True" Height="200" VerticalAlignment="Top" Margin="0 30">
                             <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="串口号" />
-                            <TextBlock Grid.Row="1" Text="波特率" />
-                            <TextBlock Grid.Row="2" Text="校验位" />
-                            <TextBlock Grid.Row="3" Text="数据位" />
-                            <TextBlock Grid.Row="4" Text="停止位" />
-                            <TextBlock Grid.Row="5" Text="流控制" />
-                            <ComboBox x:Name="serialPort" Grid.Row="0" Grid.Column="1" SelectedValue="{Binding SerialName}" />
-                            <ComboBox x:Name="baudRate" Grid.Row="1" Grid.Column="1" SelectedValue="{Binding BaudRate}" />
-                            <ComboBox x:Name="parity" Grid.Row="2" Grid.Column="1" SelectedValue="{Binding Parity}" />
-                            <ComboBox x:Name="dataBits" Grid.Row="3" Grid.Column="1" SelectedValue="{Binding DataBits}" />
-                            <ComboBox x:Name="stopBits" Grid.Row="4" Grid.Column="1" SelectedValue="{Binding StopBits}" />
-                            <ComboBox x:Name="handshake" Grid.Row="5" Grid.Column="1" SelectedValue="{Binding Handshake}" />
+                            <TextBox      Width="250" Height="35" Grid.Row="0"  Text="{Binding Account}"/>
+                            <PasswordBox  Width="250" Height="35" Grid.Row="1"  dps:PasswordBoxHelper.Attach="True"
+                                          dps:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button       Width="250" Height="35" Grid.Row="2" Content="登   录" Command="{Binding LoginCommand}"/>
                         </Grid>
-                        <Button Command="{Binding SerialPortConnectCommand}" Style="{StaticResource SerialButtonStyle}" Tag="{Binding IsConnect}" />
-                    </StackPanel>
-                </Expander>
-                <Expander Header="MID" IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect)}">
-                    <StackPanel Background="{StaticResource BackgroupBrush}">
-                        <ScrollViewer Height="320">
+                    </TabItem>
+                </TabControl>
+            </Grid>
+            <ScrollViewer x:Name="ScrView" Width="180" Visibility="Hidden" CanContentScroll="True" Margin="10 0 0 0">
+                <StackPanel>
+                    <Expander Header="相机选择">
+                        <ListBox ItemsSource="{Binding VideoList}" SelectedIndex="{Binding VideoIndex}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SwitchVideoCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBox>
+                    </Expander>
+                    <Expander Header="图像旋转">
+                        <ListBox SelectedIndex="{Binding ImageRotateFlipIndex}">
+                            <ListBoxItem>无旋转无翻转</ListBoxItem>
+                            <ListBoxItem>旋转90°无翻转</ListBoxItem>
+                            <ListBoxItem>旋转180°无翻转</ListBoxItem>
+                            <ListBoxItem>旋转270°无翻转</ListBoxItem>
+                            <ListBoxItem>无旋转翻转X</ListBoxItem>
+                            <ListBoxItem>旋转90°翻转X</ListBoxItem>
+                            <ListBoxItem>旋转180°翻转X</ListBoxItem>
+                            <ListBoxItem>旋转270°翻转X</ListBoxItem>
+                        </ListBox>
+                    </Expander>
+                    <Expander Header="串口设置">
+                        <StackPanel Background="{StaticResource BackgroupBrush}">
+                            <Grid IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect), Converter={StaticResource inverseBool}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="串口号" />
+                                <TextBlock Grid.Row="1" Text="波特率" />
+                                <TextBlock Grid.Row="2" Text="校验位" />
+                                <TextBlock Grid.Row="3" Text="数据位" />
+                                <TextBlock Grid.Row="4" Text="停止位" />
+                                <TextBlock Grid.Row="5" Text="流控制" />
+                                <ComboBox x:Name="serialPort" Grid.Row="0" Grid.Column="1" SelectedValue="{Binding SerialName}" />
+                                <ComboBox x:Name="baudRate" Grid.Row="1" Grid.Column="1" SelectedValue="{Binding BaudRate}" />
+                                <ComboBox x:Name="parity" Grid.Row="2" Grid.Column="1" SelectedValue="{Binding Parity}" />
+                                <ComboBox x:Name="dataBits" Grid.Row="3" Grid.Column="1" SelectedValue="{Binding DataBits}" />
+                                <ComboBox x:Name="stopBits" Grid.Row="4" Grid.Column="1" SelectedValue="{Binding StopBits}" />
+                                <ComboBox x:Name="handshake" Grid.Row="5" Grid.Column="1" SelectedValue="{Binding Handshake}" />
+                            </Grid>
+                            <Button Command="{Binding SerialPortConnectCommand}" Style="{StaticResource SerialButtonStyle}" Tag="{Binding IsConnect}" />
+                        </StackPanel>
+                    </Expander>
+                    <Expander Header="MID" IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect)}">
+                        <StackPanel Background="{StaticResource BackgroupBrush}">
                             <StackPanel>
                                 <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[0]}" GroupName="MID">0x10 停止当前处理</RadioButton>
                                 <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[1]}" GroupName="MID">0x11 获取当前状态</RadioButton>
@@ -193,96 +239,43 @@
                                 <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[32]}" GroupName="MID">0xFE 进入演示模式</RadioButton>
                                 <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[33]}" GroupName="MID">0x4D 抓拍图片存储</RadioButton>
                             </StackPanel>
-                        </ScrollViewer>
-                        <Border BorderBrush="#E0E0E0" BorderThickness="1" Height="300">
-                            <DockPanel
-                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                Background="{StaticResource BackgroupBrush}"
-                                IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect)}">
-                                <TabControl
-                                    Margin="0,5,0,0"
-                                    Background="{StaticResource BackgroupBrush}"
-                                    BorderBrush="Transparent"
-                                    DockPanel.Dock="Top"
-                                    SelectedIndex="{Binding TabIndex}"
-                                    Style="{StaticResource BaseStyle}">
-                                    <TabControl.Resources>
-                                        <Style TargetType="TabItem">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </Style>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" Height="300">
+                                <DockPanel
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                        Background="{StaticResource BackgroupBrush}"
+                                        IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect)}">
+                                    <TabControl
+                                            Margin="0,5,0,0"
+                                            Background="{StaticResource BackgroupBrush}"
+                                            BorderBrush="Transparent"
+                                            DockPanel.Dock="Top"
+                                            SelectedIndex="{Binding TabIndex}"
+                                            Style="{StaticResource BaseStyle}">
+                                        <TabControl.Resources>
+                                            <Style TargetType="TabItem">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </Style>
 
-                                        <Style TargetType="Grid">
-                                            <Setter Property="Background" Value="{StaticResource BackgroupBrush}" />
-                                        </Style>
+                                            <Style TargetType="Grid">
+                                                <Setter Property="Background" Value="{StaticResource BackgroupBrush}" />
+                                            </Style>
 
-                                        <Style TargetType="Label">
-                                            <Setter Property="BorderThickness" Value="0" />
-                                            <Setter Property="Foreground" Value="Red" />
-                                            <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
-                                            <Setter Property="HorizontalAlignment" Value="Center" />
-                                        </Style>
+                                            <Style TargetType="Label">
+                                                <Setter Property="BorderThickness" Value="0" />
+                                                <Setter Property="Foreground" Value="Red" />
+                                                <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                            </Style>
 
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Right" />
-                                            <Setter Property="VerticalAlignment" Value="Center" />
-                                            <Setter Property="Margin" Value="0,5,10,5" />
-                                        </Style>
-                                    </TabControl.Resources>
-                                    <TabItem />
-                                    <TabItem>
-                                        <Grid Margin="0,0,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Grid.Row="0" Text="解锁成功断电" />
-                                            <TextBlock Grid.Row="1" Text="解锁超时(s)" />
-                                            <ComboBox
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                SelectedIndex="{Binding MsgVerifyData[0]}">
-                                                <ComboBoxItem Content="NO" />
-                                                <ComboBoxItem Content="YES" />
-                                            </ComboBox>
-                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MsgVerifyData[1]}" />
-                                        </Grid>
-                                    </TabItem>
-                                    <TabItem>
-                                        <Grid Margin="0,0,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Grid.Row="0" Text="管理员" />
-                                            <TextBlock Grid.Row="1" Text="姓名" />
-                                            <TextBlock Grid.Row="2" Text="面部方向" />
-                                            <TextBlock Grid.Row="3" Text="超时时间(s)" />
-                                            <CheckBox Grid.Row="0" Grid.Column="1" Margin="10,5" IsChecked="{Binding MsgEnrollData_Admin}" />
-                                            <TextBox  Grid.Row="1" Grid.Column="1" Text="{Binding MsgEnrollData_Name}" />
-                                            <ComboBox Grid.Row="2" Grid.Column="1" IsEnabled="{Binding FaceDirIsEnble}" SelectedIndex="{Binding MsgEnrollData_Face}">
-                                                <ComboBoxItem>未定义</ComboBoxItem>
-                                                <ComboBoxItem>面中部</ComboBoxItem>
-                                                <ComboBoxItem>面朝右</ComboBoxItem>
-                                                <ComboBoxItem>面朝左</ComboBoxItem>
-                                                <ComboBoxItem>面朝下</ComboBoxItem>
-                                                <ComboBoxItem>面朝上</ComboBoxItem>
-                                            </ComboBox>
-                                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding MsgEnrollData_Time}" />
-                                        </Grid>
-                                    </TabItem>
-                                    <TabItem>
-                                        <StackPanel>
-                                            <Grid>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Margin" Value="0,5,10,5" />
+                                            </Style>
+                                        </TabControl.Resources>
+                                        <TabItem />
+                                        <TabItem>
+                                            <Grid Margin="0,0,0,0">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition />
                                                     <ColumnDefinition />
@@ -291,101 +284,85 @@
                                                     <RowDefinition />
                                                     <RowDefinition />
                                                 </Grid.RowDefinitions>
-                                                <TextBlock Grid.Row="0" Text="图片数量" />
-                                                <TextBlock Grid.Row="1" Text="图片起始(1-50)" />
-                                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ImageDataCapture[0]}" />
-                                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ImageDataCapture[1]}" />
+                                                <TextBlock Grid.Row="0" Text="解锁成功断电" />
+                                                <TextBlock Grid.Row="1" Text="解锁超时(s)" />
+                                                <ComboBox
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    SelectedIndex="{Binding MsgVerifyData[0]}">
+                                                    <ComboBoxItem Content="NO" />
+                                                    <ComboBoxItem Content="YES" />
+                                                </ComboBox>
+                                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MsgVerifyData[1]}" />
                                             </Grid>
-                                            <Label Content="无效果，请使用0x4D" Foreground="Red" />
-                                        </StackPanel>
-                                    </TabItem>
-                                    <TabItem>
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="上传图片编号" />
-                                                <TextBox Width="60" Text="{Binding SaveImageNo}" />
+                                        </TabItem>
+                                        <TabItem>
+                                            <Grid Margin="0,0,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.Row="0" Text="管理员" />
+                                                <TextBlock Grid.Row="1" Text="姓名" />
+                                                <TextBlock Grid.Row="2" Text="面部方向" />
+                                                <TextBlock Grid.Row="3" Text="超时时间(s)" />
+                                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="10,5" IsChecked="{Binding MsgEnrollData_Admin}" />
+                                                <TextBox  Grid.Row="1" Grid.Column="1" Text="{Binding MsgEnrollData_Name}" />
+                                                <ComboBox Grid.Row="2" Grid.Column="1" IsEnabled="{Binding FaceDirIsEnble}" SelectedIndex="{Binding MsgEnrollData_Face}">
+                                                    <ComboBoxItem>未定义</ComboBoxItem>
+                                                    <ComboBoxItem>面中部</ComboBoxItem>
+                                                    <ComboBoxItem>面朝右</ComboBoxItem>
+                                                    <ComboBoxItem>面朝左</ComboBoxItem>
+                                                    <ComboBoxItem>面朝下</ComboBoxItem>
+                                                    <ComboBoxItem>面朝上</ComboBoxItem>
+                                                </ComboBox>
+                                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding MsgEnrollData_Time}" />
+                                            </Grid>
+                                        </TabItem>
+                                        <TabItem>
+                                            <StackPanel>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Text="图片数量" />
+                                                    <TextBlock Grid.Row="1" Text="图片起始(1-50)" />
+                                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ImageDataCapture[0]}" />
+                                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ImageDataCapture[1]}" />
+                                                </Grid>
+                                                <Label Content="无效果，请使用0x4D" Foreground="Red" />
                                             </StackPanel>
-                                            <Label Content="无效果，请使用0X4D" Foreground="Red" />
-                                        </StackPanel>
-                                    </TabItem>
-                                    <TabItem>
-                                        <Label Content="无效果，请使用0x4D" Foreground="Red" />
-                                    </TabItem>
-                                    <TabItem>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Margin="20,0,10,0" Text="ID" />
-                                            <TextBox Width="50" Text="{Binding UserID}" />
-                                        </StackPanel>
-                                    </TabItem>
-                                    <TabItem>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Grid.Row="0" Text="管理员" />
-                                            <TextBlock Grid.Row="1" Text="姓名" />
-                                            <TextBlock Grid.Row="2" Text="面部方向" />
-                                            <TextBlock Grid.Row="3" Text="注册类型" />
-                                            <TextBlock Grid.Row="4" Text="人脸重复录入" />
-                                            <TextBlock Grid.Row="5" Text="超时时间(s)" />
-                                            <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding MsgEnrollData_Admin}" />
-                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MsgEnrollData_Name}" />
-                                            <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding MsgEnrollData_Face}">
-                                                <ComboBoxItem>未定义</ComboBoxItem>
-                                                <ComboBoxItem>面中部</ComboBoxItem>
-                                                <ComboBoxItem>面朝右</ComboBoxItem>
-                                                <ComboBoxItem>面朝左</ComboBoxItem>
-                                                <ComboBoxItem>面朝下</ComboBoxItem>
-                                                <ComboBoxItem>面朝上</ComboBoxItem>
-                                            </ComboBox>
-                                            <ComboBox Grid.Row="3" Grid.Column="1" SelectedIndex="{Binding RegisterType}">
-                                                <ComboBoxItem>单帧录入</ComboBoxItem>
-                                                <ComboBoxItem>交互录入</ComboBoxItem>
-                                            </ComboBox>
-                                            <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding ReRegisterType}">
-                                                <ComboBoxItem>不可以同一个人录入但是姓名可以重复</ComboBoxItem>
-                                                <ComboBoxItem>可以同一个人重复录入姓名也可以重复</ComboBoxItem>
-                                                <ComboBoxItem>可以同一个人录入但是姓名不可以重复(仅在RGB注册时有效)</ComboBoxItem>
-                                            </ComboBox>
-                                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MsgEnrollData_Time}" />
-                                        </Grid>
-                                    </TabItem>
-                                    <TabItem>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Grid.Row="0" Text="主要版本号" />
-                                            <TextBlock Grid.Row="1" Text="辅助版本号" />
-                                            <TextBlock Grid.Row="2" Text="修订号" />
-                                            <TextBlock Grid.Row="3" Text="类型" />
-                                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding StartOTA[0]}" />
-                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding StartOTA[1]}" />
-                                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding StartOTA[2]}" />
-                                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding StartOTA[3]}" ToolTip="0:OS 1:FaceLib" />
-                                        </Grid>
-                                    </TabItem>
-                                    <TabItem>
-                                        <Label Content="功能未实现" />
-                                    </TabItem>
-                                    <TabItem>
-                                        <StackPanel>
+                                        </TabItem>
+                                        <TabItem>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="上传图片编号" />
+                                                    <TextBox Width="60" Text="{Binding SaveImageNo}" />
+                                                </StackPanel>
+                                                <Label Content="无效果，请使用0X4D" Foreground="Red" />
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem>
+                                            <Label Content="无效果，请使用0x4D" Foreground="Red" />
+                                        </TabItem>
+                                        <TabItem>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="20,0,10,0" Text="ID" />
+                                                <TextBox Width="50" Text="{Binding UserID}" />
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem>
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition />
@@ -397,105 +374,174 @@
                                                     <RowDefinition />
                                                     <RowDefinition />
                                                     <RowDefinition />
+                                                    <RowDefinition />
                                                 </Grid.RowDefinitions>
-                                                <TextBlock Grid.Row="0" Text="Key1" />
-                                                <TextBlock Grid.Row="1" Text="key2" />
-                                                <TextBlock Grid.Row="2" Text="key3" />
-                                                <TextBlock Grid.Row="3" Text="key4" />
-                                                <TextBlock Grid.Row="4" Text="加密类型" />
-                                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EncryptionData[0]}" />
-                                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EncryptionData[1]}" />
-                                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EncryptionData[2]}" />
-                                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EncryptionData[3]}" />
-                                                <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding EncryptionData[4]}">
-                                                    <ComboBoxItem>DEFAULT</ComboBoxItem>
-                                                    <ComboBoxItem>AES</ComboBoxItem>
-                                                    <ComboBoxItem>SMPL</ComboBoxItem>
+                                                <TextBlock Grid.Row="0" Text="管理员" />
+                                                <TextBlock Grid.Row="1" Text="姓名" />
+                                                <TextBlock Grid.Row="2" Text="面部方向" />
+                                                <TextBlock Grid.Row="3" Text="注册类型" />
+                                                <TextBlock Grid.Row="4" Text="人脸重复录入" />
+                                                <TextBlock Grid.Row="5" Text="超时时间(s)" />
+                                                <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding MsgEnrollData_Admin}" />
+                                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MsgEnrollData_Name}" />
+                                                <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding MsgEnrollData_Face}">
+                                                    <ComboBoxItem>未定义</ComboBoxItem>
+                                                    <ComboBoxItem>面中部</ComboBoxItem>
+                                                    <ComboBoxItem>面朝右</ComboBoxItem>
+                                                    <ComboBoxItem>面朝左</ComboBoxItem>
+                                                    <ComboBoxItem>面朝下</ComboBoxItem>
+                                                    <ComboBoxItem>面朝上</ComboBoxItem>
+                                                </ComboBox>
+                                                <ComboBox Grid.Row="3" Grid.Column="1" SelectedIndex="{Binding RegisterType}">
+                                                    <ComboBoxItem>单帧录入</ComboBoxItem>
+                                                    <ComboBoxItem>交互录入</ComboBoxItem>
+                                                </ComboBox>
+                                                <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding ReRegisterType}">
+                                                    <ComboBoxItem>不可以同一个人录入但是姓名可以重复</ComboBoxItem>
+                                                    <ComboBoxItem>可以同一个人重复录入姓名也可以重复</ComboBoxItem>
+                                                    <ComboBoxItem>可以同一个人录入但是姓名不可以重复(仅在RGB注册时有效)</ComboBoxItem>
+                                                </ComboBox>
+                                                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MsgEnrollData_Time}" />
+                                            </Grid>
+                                        </TabItem>
+                                        <TabItem>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.Row="0" Text="主要版本号" />
+                                                <TextBlock Grid.Row="1" Text="辅助版本号" />
+                                                <TextBlock Grid.Row="2" Text="修订号" />
+                                                <TextBlock Grid.Row="3" Text="类型" />
+                                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding StartOTA[0]}" />
+                                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding StartOTA[1]}" />
+                                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding StartOTA[2]}" />
+                                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding StartOTA[3]}" ToolTip="0:OS 1:FaceLib" />
+                                            </Grid>
+                                        </TabItem>
+                                        <TabItem>
+                                            <Label Content="功能未实现" />
+                                        </TabItem>
+                                        <TabItem>
+                                            <StackPanel>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Text="Key1" />
+                                                    <TextBlock Grid.Row="1" Text="key2" />
+                                                    <TextBlock Grid.Row="2" Text="key3" />
+                                                    <TextBlock Grid.Row="3" Text="key4" />
+                                                    <TextBlock Grid.Row="4" Text="加密类型" />
+                                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EncryptionData[0]}" />
+                                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EncryptionData[1]}" />
+                                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EncryptionData[2]}" />
+                                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EncryptionData[3]}" />
+                                                    <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding EncryptionData[4]}">
+                                                        <ComboBoxItem>DEFAULT</ComboBoxItem>
+                                                        <ComboBoxItem>AES</ComboBoxItem>
+                                                        <ComboBoxItem>SMPL</ComboBoxItem>
+                                                    </ComboBox>
+                                                </Grid>
+                                                <Label Content="发送后需重启" />
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem>
+                                            <StackPanel>
+                                                <ComboBox Width="100" SelectedIndex="{Binding DevBaudrateIndex}">
+                                                    <ComboBoxItem>115200</ComboBoxItem>
+                                                    <ComboBoxItem>230400</ComboBoxItem>
+                                                    <ComboBoxItem>460800</ComboBoxItem>
+                                                    <ComboBoxItem>1500000</ComboBoxItem>
+                                                </ComboBox>
+                                                <Label Content="需要进入OTA模式" />
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem>
+                                            <StackPanel>
+                                                <TextBlock HorizontalAlignment="Center" Text="密钥序列" />
+                                                <TextBox HorizontalContentAlignment="Center" Text="{Binding SetKey}" />
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="日志类型" />
+                                                <ComboBox Width="100" SelectedIndex="{Binding LogTypeIndex}">
+                                                    <ListBoxItem>内核日志</ListBoxItem>
+                                                    <ListBoxItem>程序日志</ListBoxItem>
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.Row="0" Text="verify(验证)" />
+                                                <TextBlock Grid.Row="1" Text="liveness(活性)" />
+                                                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding ThresholdLevel[0]}">
+                                                    <ComboBoxItem>低</ComboBoxItem>
+                                                    <ComboBoxItem>较低</ComboBoxItem>
+                                                    <ComboBoxItem>正常</ComboBoxItem>
+                                                    <ComboBoxItem>较高</ComboBoxItem>
+                                                    <ComboBoxItem>高</ComboBoxItem>
+                                                </ComboBox>
+                                                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding ThresholdLevel[1]}">
+                                                    <ComboBoxItem>低</ComboBoxItem>
+                                                    <ComboBoxItem>较低</ComboBoxItem>
+                                                    <ComboBoxItem>正常</ComboBoxItem>
+                                                    <ComboBoxItem>较高</ComboBoxItem>
+                                                    <ComboBoxItem>高</ComboBoxItem>
                                                 </ComboBox>
                                             </Grid>
-                                            <Label Content="发送后需重启" />
-                                        </StackPanel>
-                                    </TabItem>
-                                    <TabItem>
-                                        <StackPanel>
-                                            <ComboBox Width="100" SelectedIndex="{Binding DevBaudrateIndex}">
-                                                <ComboBoxItem>115200</ComboBoxItem>
-                                                <ComboBoxItem>230400</ComboBoxItem>
-                                                <ComboBoxItem>460800</ComboBoxItem>
-                                                <ComboBoxItem>1500000</ComboBoxItem>
-                                            </ComboBox>
-                                            <Label Content="需要进入OTA模式" />
-                                        </StackPanel>
-                                    </TabItem>
-                                    <TabItem>
-                                        <StackPanel>
-                                            <TextBlock HorizontalAlignment="Center" Text="密钥序列" />
-                                            <TextBox HorizontalContentAlignment="Center" Text="{Binding SetKey}" />
-                                        </StackPanel>
-                                    </TabItem>
-                                    <TabItem>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="日志类型" />
-                                            <ComboBox Width="100" SelectedIndex="{Binding LogTypeIndex}">
-                                                <ListBoxItem>内核日志</ListBoxItem>
-                                                <ListBoxItem>程序日志</ListBoxItem>
-                                            </ComboBox>
-                                        </StackPanel>
-                                    </TabItem>
-                                    <TabItem>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Grid.Row="0" Text="verify(验证)" />
-                                            <TextBlock Grid.Row="1" Text="liveness(活性)" />
-                                            <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding ThresholdLevel[0]}">
-                                                <ComboBoxItem>低</ComboBoxItem>
-                                                <ComboBoxItem>较低</ComboBoxItem>
-                                                <ComboBoxItem>正常</ComboBoxItem>
-                                                <ComboBoxItem>较高</ComboBoxItem>
-                                                <ComboBoxItem>高</ComboBoxItem>
-                                            </ComboBox>
-                                            <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding ThresholdLevel[1]}">
-                                                <ComboBoxItem>低</ComboBoxItem>
-                                                <ComboBoxItem>较低</ComboBoxItem>
-                                                <ComboBoxItem>正常</ComboBoxItem>
-                                                <ComboBoxItem>较高</ComboBoxItem>
-                                                <ComboBoxItem>高</ComboBoxItem>
-                                            </ComboBox>
-                                        </Grid>
-                                    </TabItem>
-                                    <TabItem>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="Debug模式" />
-                                            <ComboBox SelectedIndex="{Binding DebugMode}">
-                                                <ComboBoxItem Content="禁止" />
-                                                <ComboBoxItem Content="使能" />
-                                            </ComboBox>
-                                        </StackPanel>
-                                    </TabItem>
-                                    <TabItem>
-                                        <Image />
-                                    </TabItem>
-                                </TabControl>
-                                <Button
-                                    Width="100"
-                                    Margin="5"
-                                    VerticalAlignment="Bottom"
-                                    Command="{Binding SerialSendCommand}"
-                                    Content="发 送"
-                                    DockPanel.Dock="Bottom" />
-                            </DockPanel>
-                        </Border>
-                    </StackPanel>
-                </Expander>
-            </StackPanel>
+                                        </TabItem>
+                                        <TabItem>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Debug模式" />
+                                                <ComboBox SelectedIndex="{Binding DebugMode}">
+                                                    <ComboBoxItem Content="禁止" />
+                                                    <ComboBoxItem Content="使能" />
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem>
+                                            <Image />
+                                        </TabItem>
+                                    </TabControl>
+                                    <Button
+                                        Width="100"
+                                        Margin="5"
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding SerialSendCommand}"
+                                        Content="发 送"
+                                        DockPanel.Dock="Bottom" />
+                                </DockPanel>
+                            </Border>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
             <view:ConsoleView Grid.Row="1" Grid.Column="1" />
-        </Grid>
+        </StackPanel>
     </DockPanel>
 </Window>

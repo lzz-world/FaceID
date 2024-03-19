@@ -9,13 +9,13 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+                <ResourceDictionary Source="./Assets/TabControlDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-
-
-
-            <SolidColorBrush x:Key="BackgroupDefualt" Color="#fafafa"/>
+            <SolidColorBrush x:Key="BackgroupDefualt" Color="#012F63"/>
+            <SolidColorBrush x:Key="BackgroupBlue" Color="#fafafa"/>
             <SolidColorBrush x:Key="BackgroupBrush" Color="#EEEEEE"/>
+            <SolidColorBrush x:Key="ForgroupBrush" Color="#ffffff"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -5,6 +5,8 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\AForge.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\AForge.Video.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\AForge.Video.DirectShow.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\CommunityToolkit.Mvvm.dll
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\FreeSql.dll
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\FreeSql.Provider.Sqlite.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\HandyControl.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\MahApps.Metro.IconPacks.BootstrapIcons.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\MahApps.Metro.IconPacks.BoxIcons.dll
@@ -43,6 +45,7 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\Microsoft.Bcl
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\Microsoft.Extensions.DependencyInjection.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\Microsoft.Xaml.Behaviors.dll
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\System.Data.SQLite.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\System.Buffers.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\System.ComponentModel.Annotations.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\System.Memory.dll
@@ -51,9 +54,11 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\System.Runtim
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\System.Threading.Tasks.Extensions.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\ValueConverters.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\ValueConverters.Annotations.dll
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\bin\Debug\net472\zh-Hans\FreeSql.resources.dll
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.csproj.AssemblyReference.cache
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.csproj.SuggestedBindingRedirects.cache
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.exe.config
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Assets\TabControlDictionary.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\ConsoleView.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\MainWindow.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\App.g.cs

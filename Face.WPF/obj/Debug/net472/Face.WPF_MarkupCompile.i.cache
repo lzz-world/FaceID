@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NETFRAMEWORK;NET472;
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\App.xaml
-2-1840362536
+3241927253
 
-131448225136
-732015794347
-Views\ConsoleView.xaml;Views\MainWindow.xaml;
+171812632788
+761258113759
+Assets\TabControlDictionary.xaml;Views\ConsoleView.xaml;Views\MainWindow.xaml;
 
-False
+True
 

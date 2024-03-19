@@ -12,6 +12,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Assets\TabControlDictionary.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\ConsoleView.xaml">
       <SubType>Designer</SubType>
     </Page>

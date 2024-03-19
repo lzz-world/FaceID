@@ -25,6 +25,7 @@ using Color = System.Windows.Media.Color;
 using static Face.WPF.Models.FaceModel;
 using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
+using System.Security;
 
 namespace Face.WPF.ViewModels
 {
@@ -39,6 +40,8 @@ namespace Face.WPF.ViewModels
         private Stopwatch stopwatch = new Stopwatch();
         private bool isReadImageData = false;
         private byte[] imageData;
+        private int faceID = -1;
+        private Task faseScanTask;
 
         [ObservableProperty] private List<string> videoList = new List<string>();
         [ObservableProperty] private int videoIndex = -1;
@@ -52,7 +55,10 @@ namespace Face.WPF.ViewModels
         [ObservableProperty] private bool isConnect = false;
         [ObservableProperty] private int tabIndex = 0;
         [ObservableProperty] private bool faceDirIsEnble = false;
+        [ObservableProperty] private string account;
+        [ObservableProperty] private string password;
 
+        public int LoginTabIndex { get; set; } = 0;
         public ConsoleView ConsoleObj { get; set; }
         public bool[] BtnRadioIsCheck { get; set; } = new bool[50];
         public int ImageRotateFlipIndex
@@ -82,7 +88,7 @@ namespace Face.WPF.ViewModels
         {
             get
             {
-                if (Gl.MySerialPort == null || 
+                if (Gl.MySerialPort == null ||
                     Gl.MySerialPort.PortName != SerialName ||
                     Gl.MySerialPort.BaudRate.ToString() != BaudRate ||
                     Gl.MySerialPort.Parity.ToString() != Parity ||
@@ -127,6 +133,39 @@ namespace Face.WPF.ViewModels
             }
 
             SerialPortConnect();
+
+            faseScanTask = Task.Run(async() => {
+                await Task.Delay(3000);
+                while (true)
+                {
+                    SerialWrite(2);
+                    long tTick = DateTime.Now.Ticks;
+
+                    while (true)
+                    {
+                        if (faceID != -1)
+                            Login();
+                        if ((DateTime.Now.Ticks - tTick) > (MsgVerifyData[1] * 1_000_0000))
+                            break;
+                        await Task.Delay(50);
+                    }
+                }
+            });
+        }
+
+        [RelayCommand]
+        private void Login()
+        {
+            IEnumerable<UserModel> users;
+            if(LoginTabIndex == 0)
+                users = DB.Fsql.Select<UserModel>().Where(w => w.FaseId == faceID).ToList();
+            else
+                users = DB.Fsql.Select<UserModel>().Where(w => HashEncrypMD5.Md5Encrypt_Key(w.Account, HashEncrypMD5.Key) == Account && HashEncrypMD5.Md5Encrypt_Key(w.Pssword, HashEncrypMD5.Key) == Password).ToList();
+
+            if (users.Count() > 0)
+            {
+                MessageBox.Show("OK");
+            }
         }
 
         /// <summary>
@@ -369,7 +408,7 @@ namespace Face.WPF.ViewModels
             {
                 stopwatch.Restart();
                 SerialPort.Write(bytes, 0, bytes.Length);
-            }    
+            }
             catch (Exception ex)
             {
                 Gl.printLogColor(ex.Message, redBrush, null);
@@ -440,7 +479,7 @@ namespace Face.WPF.ViewModels
                 }
             #endregion
 
-                encrypted:
+            encrypted:
                 stopwatch.Stop();
                 Gl.printLogColor(BitConverter.ToString(buffer).Replace('-', ' '), greenBrush, null);
                 Gl.printLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
@@ -462,6 +501,7 @@ namespace Face.WPF.ViewModels
                                 Gl.printLog("用户名字：" + userName);
                                 Gl.printLog("是否为管理员：" + isAdmin);
                                 Gl.printLog("解锁中眼状态：" + unlockStatu);
+                                faceID = id;
                                 break;
                             case 0x13:
                                 id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
@@ -534,7 +574,7 @@ namespace Face.WPF.ViewModels
                 }
                 return;
 
-                readImage:
+            readImage:
                 imageData = imageData.Concat(buffer).ToArray();
                 if (imageData.Length >= 78320)
                 {
