@@ -17,6 +17,7 @@
         Background="{StaticResource BackgroupDefualt}"
         BorderThickness="0"
         IsReadOnly="True"
+        Width="600"
         VerticalScrollBarVisibility="Auto">
         <FlowDocument x:Name="FlowDocument" />
     </RichTextBox>

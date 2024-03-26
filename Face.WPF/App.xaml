@@ -1,21 +1,68 @@
-﻿<Application
-    x:Class="Face.WPF.App"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Face.WPF"
-    StartupUri="Views/MainWindow.xaml">
+﻿<Application x:Class="Face.WPF.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Face.WPF" StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-                <ResourceDictionary Source="./Assets/TabControlDictionary.xaml"/>
+                <ResourceDictionary Source="./Assets/TabControlDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <SolidColorBrush x:Key="BackgroupDefualt" Color="#012F63"/>
-            <SolidColorBrush x:Key="BackgroupBlue" Color="#fafafa"/>
-            <SolidColorBrush x:Key="BackgroupBrush" Color="#EEEEEE"/>
-            <SolidColorBrush x:Key="ForgroupBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="BackgroupDefualt" Color="#001231" />
+            <SolidColorBrush x:Key="BackgroupOne" Color="#012F63" />
+            <SolidColorBrush x:Key="BackgroupTwo" Color="#395378" />
+            <SolidColorBrush x:Key="BackgroupThree" Color="#6C8FBA" />
+            <SolidColorBrush x:Key="BackgroupFour" Color="#59A6E8" />
+            <SolidColorBrush x:Key="BackgroupFive" Color="#51b5ff" />
+            <SolidColorBrush x:Key="UserBackgroupBrush" Color="#3c6eca" />
+            <SolidColorBrush x:Key="BackgroupBrush" Color="#EEEEEE" />
+            <SolidColorBrush x:Key="ForgroupBrush" Color="#ffffff" />
+
+            <Style x:Key="FaseInfoStyle" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="5,5,5,5" />
+                <Setter Property="FontWeight" Value="Light" />
+            </Style>
+
+            <Style BasedOn="{StaticResource TextBoxBaseBaseStyle}" TargetType="TextBox">
+                <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BackgroupThree}" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+            </Style>
+
+            <Style BasedOn="{StaticResource PasswordBoxBaseStyle}" TargetType="PasswordBox">
+                <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BackgroupThree}" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                <Setter Property="FontWeight" Value="Medium" />
+            </Style>
+
+            <Style x:Key="ButtonBaseStyle" BasedOn="{StaticResource ButtonPrimary}" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="{StaticResource BackgroupOne}" />
+                <Setter Property="BorderBrush" Value="#4294d1" />
+                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="FontWeight" Value="Medium"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="#51b5ff" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ToggleBtnBaseStyle" BasedOn="{StaticResource ToggleButtonBaseStyle}" TargetType="{x:Type ToggleButton}">
+                <Setter Property="Background" Value="{StaticResource BackgroupOne}" />
+                <Setter Property="BorderBrush" Value="#4294d1" />
+                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="#51b5ff" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -9,12 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\Icon\Head.png" />
-    <None Remove="Assets\Icon\Head2.png" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Services\**" />
+    <Page Remove="Services\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <None Remove="Assets\Icon\Head.png" />
+    <None Remove="Assets\Icon\Head2.png" />
   </ItemGroup>
 
   <ItemGroup>

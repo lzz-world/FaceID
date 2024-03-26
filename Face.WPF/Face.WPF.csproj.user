@@ -10,6 +10,15 @@
     <Compile Update="Views\ConsoleView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\LoginView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\VedioView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Assets\TabControlDictionary.xaml">
@@ -18,7 +27,16 @@
     <Page Update="Views\ConsoleView.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\LoginView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\VedioView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

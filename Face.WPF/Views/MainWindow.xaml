@@ -8,8 +8,6 @@
         xmlns:conv ="clr-namespace:ValueConverters;assembly=ValueConverters"
         xmlns:dps ="clr-namespace:Face.WPF.Utils.DPropertys"
         xmlns:view ="clr-namespace:Face.WPF.Views"
-        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-        xmlns:wfi ="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
         xmlns:vm ="clr-namespace:Face.WPF.ViewModels"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -23,7 +21,7 @@
         Closed="Window_Closed"
         ResizeMode="NoResize"
         Background="{StaticResource BackgroupDefualt}"
-        Title="MainWindow" Width="330" Height="700">
+        Title="MainWindow" Width="330" Height="720">
     <WindowChrome.WindowChrome>
         <WindowChrome
             CaptionHeight="30"
@@ -33,19 +31,12 @@
             ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
     <Window.DataContext>
-        <vm:MainViewModel />
+        <vm:MainViewModel x:Name="ViewModel"/>
     </Window.DataContext>
     <Window.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-
-        <Style x:Key="FaseInfoStyle" TargetType="TextBlock">
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0 5 0 5" />
-            <Setter Property="FontWeight" Value="Light" />
         </Style>
 
         <Style BasedOn="{StaticResource GroupBoxTab.Small}" TargetType="GroupBox" />
@@ -77,7 +68,7 @@
         </Style>
         <conv:InverseBoolConverter x:Key="inverseBool" />
     </Window.Resources>
-    <DockPanel Margin="5,0,0,0" Width="auto">
+    <DockPanel Margin="5,0,0,5" Width="auto">
         <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Right" Orientation="Horizontal">
             <StackPanel.Resources>
                 <Style TargetType="Button">
@@ -89,6 +80,7 @@
                     <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
                 </Style>
             </StackPanel.Resources>
+            <Button Command="{Binding LogOutCommand}"></Button>
             <Button x:Name="SetBtn">
                 <iconPacks:BootstrapIcons Kind="Gear"/>
             </Button>
@@ -96,60 +88,23 @@
                 <iconPacks:BootstrapIcons Kind="x" />
             </Button>
         </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Grid Width="320">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="70"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Image Width="60" Source="\Assets\Icon\Head2.png"/>
-                <TabControl Grid.Row="1" Style="{StaticResource TabControlStyle}" SelectedIndex="{Binding LoginTabIndex}"
-                            Background="Transparent" BorderBrush="Transparent" >
-                    <TabItem Header="人脸识别登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
-                        <StackPanel>
-                            <wfi:WindowsFormsHost HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                <wf:PictureBox x:Name="videoBox"/>
-                            </wfi:WindowsFormsHost>
-                            <Grid Margin="0 10 0 0" ShowGridLines="False">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Style="{StaticResource FaseInfoStyle}" Text="ID :" Grid.Column="0" Grid.Row="0"/>
-                                <TextBlock Style="{StaticResource FaseInfoStyle}" Text="姓名 :" Grid.Column="0" Grid.Row="1"/>
-                                <TextBlock Style="{StaticResource FaseInfoStyle}" Text="部门 :" Grid.Column="0" Grid.Row="2"/>
-                                <TextBlock Text="{Binding UserInfo[0]}" Grid.Column="1" Grid.Row="0"/>
-                                <TextBlock Text="{Binding UserInfo[1]}" Grid.Column="1" Grid.Row="1"/>
-                                <TextBlock Text="{Binding UserInfo[2]}" Grid.Column="1" Grid.Row="2"/>
-                            </Grid>
-                        </StackPanel>
-                    </TabItem>
-                    <TabItem Header="账号密码登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
-                        <Grid ShowGridLines="True" Height="200" VerticalAlignment="Top" Margin="0 30">
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <TextBox      Width="250" Height="35" Grid.Row="0"  Text="{Binding Account}"/>
-                            <PasswordBox  Width="250" Height="35" Grid.Row="1"  dps:PasswordBoxHelper.Attach="True"
-                                          dps:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <Button       Width="250" Height="35" Grid.Row="2" Content="登   录" Command="{Binding LoginCommand}"/>
-                        </Grid>
-                    </TabItem>
-                </TabControl>
-            </Grid>
-            <ScrollViewer x:Name="ScrView" Width="180" Visibility="Hidden" CanContentScroll="True" Margin="10 0 0 0">
+        <Grid ShowGridLines="False">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <ContentControl x:Name="contentControl" Grid.Column="0" Content="{Binding ContentControl}"></ContentControl>
+            <ScrollViewer Grid.Column="1" x:Name="ScrView" MaxWidth="185" Visibility="Collapsed" CanContentScroll="True" Margin="5 0 0 0">
                 <StackPanel>
-                    <Expander Header="相机选择">
+                    <Expander>
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="相机选择"/>
+                                <Button Margin="60 0 0 0" Background="Transparent" BorderBrush="Transparent" Foreground="Black">
+                                    <iconPacks:BootstrapIcons Kind="ArrowClockwise"/>
+                                </Button>
+                            </StackPanel>
+                        </Expander.Header>
                         <ListBox ItemsSource="{Binding VideoList}" SelectedIndex="{Binding VideoIndex}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
@@ -203,43 +158,45 @@
                     </Expander>
                     <Expander Header="MID" IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect)}">
                         <StackPanel Background="{StaticResource BackgroupBrush}">
-                            <StackPanel>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[0]}" GroupName="MID">0x10 停止当前处理</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[1]}" GroupName="MID">0x11 获取当前状态</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[2]}" GroupName="MID">0x12 鉴权解锁</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[3]}" GroupName="MID">0x13 交互录入</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[4]}" GroupName="MID">0x16 抓拍本地存储</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[5]}" GroupName="MID">0x17 上传图片大小</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[6]}" GroupName="MID">0x18 图上传至主控</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[7]}" GroupName="MID">0x1D 单帧录入</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[8]}" GroupName="MID">0x20 删除某个用户</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[9]}" GroupName="MID">0x21 删除所有用户</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[10]}" GroupName="MID">0x22 某个用户信息</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[11]}" GroupName="MID">0x23 重置算法状态</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[12]}" GroupName="MID">0x24 所有用户信息</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[13]}" GroupName="MID">0x26 扩展录入方式</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[14]}" GroupName="MID">0x30 获取版本信息</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[15]}" GroupName="MID">0x40 进入OTA模式</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[16]}" GroupName="MID">0x41 退出OTA模式</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[17]}" GroupName="MID">0x42 获取OTA状态</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[18]}" GroupName="MID">0x43 发送升级包A</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[19]}" GroupName="MID">0x44 发送升级包B</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[20]}" GroupName="MID">0x50 设解密随机数</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[21]}" GroupName="MID">0x51 OTA设波特率</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[22]}" GroupName="MID">0x52 设定Release序列</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[23]}" GroupName="MID">0x53 设定Debug密钥</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[24]}" GroupName="MID">0x60 日志存至内存</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[25]}" GroupName="MID">0x61 日志传至主控</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[26]}" GroupName="MID">0xD4 算法安全等级</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[27]}" GroupName="MID">0xED 模组准备关机</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[28]}" GroupName="MID">0xF0 调试模式</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[29]}" GroupName="MID">0xF1 调试模式信息</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[30]}" GroupName="MID">0xF2 上传调试信息</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[31]}" GroupName="MID">0xF3 当前解锁信息</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[32]}" GroupName="MID">0xFE 进入演示模式</RadioButton>
-                                <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[33]}" GroupName="MID">0x4D 抓拍图片存储</RadioButton>
-                            </StackPanel>
-                            <Border BorderBrush="#E0E0E0" BorderThickness="1" Height="300">
+                            <ScrollViewer Height="360">
+                                <StackPanel>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[0]}" GroupName="MID">0x10 停止当前处理</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[1]}" GroupName="MID">0x11 获取当前状态</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[2]}" GroupName="MID">0x12 鉴权解锁</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[3]}" GroupName="MID">0x13 交互录入</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[4]}" GroupName="MID">0x16 抓拍本地存储</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[5]}" GroupName="MID">0x17 上传图片大小</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[6]}" GroupName="MID">0x18 图上传至主控</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[7]}" GroupName="MID">0x1D 单帧录入</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[8]}" GroupName="MID">0x20 删除某个用户</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[9]}" GroupName="MID">0x21 删除所有用户</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[10]}" GroupName="MID">0x22 某个用户信息</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[11]}" GroupName="MID">0x23 重置算法状态</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[12]}" GroupName="MID">0x24 所有用户信息</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[13]}" GroupName="MID">0x26 扩展录入方式</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[14]}" GroupName="MID">0x30 获取版本信息</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[15]}" GroupName="MID">0x40 进入OTA模式</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[16]}" GroupName="MID">0x41 退出OTA模式</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[17]}" GroupName="MID">0x42 获取OTA状态</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[18]}" GroupName="MID">0x43 发送升级包A</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[19]}" GroupName="MID">0x44 发送升级包B</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[20]}" GroupName="MID">0x50 设解密随机数</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[21]}" GroupName="MID">0x51 OTA设波特率</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[22]}" GroupName="MID">0x52 设定Release序列</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[23]}" GroupName="MID">0x53 设定Debug密钥</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[24]}" GroupName="MID">0x60 日志存至内存</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[25]}" GroupName="MID">0x61 日志传至主控</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[26]}" GroupName="MID">0xD4 算法安全等级</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[27]}" GroupName="MID">0xED 模组准备关机</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[28]}" GroupName="MID">0xF0 调试模式</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[29]}" GroupName="MID">0xF1 调试模式信息</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[30]}" GroupName="MID">0xF2 上传调试信息</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[31]}" GroupName="MID">0xF3 当前解锁信息</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[32]}" GroupName="MID">0xFE 进入演示模式</RadioButton>
+                                    <RadioButton Command="{Binding SwitchMidCommand}" IsChecked="{Binding BtnRadioIsCheck[33]}" GroupName="MID">0x4D 抓拍图片存储</RadioButton>
+                                </StackPanel>
+                            </ScrollViewer>
+                            <Border BorderThickness="1" Height="300" CornerRadius="10">
                                 <DockPanel
                                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                         Background="{StaticResource BackgroupBrush}"
@@ -541,7 +498,6 @@
                     </Expander>
                 </StackPanel>
             </ScrollViewer>
-            <view:ConsoleView Grid.Row="1" Grid.Column="1" />
-        </StackPanel>
+        </Grid>
     </DockPanel>
 </Window>

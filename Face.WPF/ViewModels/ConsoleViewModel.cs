@@ -61,7 +61,7 @@ namespace Face.WPF.ViewModels
 
                 Run text = new Run(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:") + DateTime.Now.Millisecond.ToString().PadLeft(3, '0') + "    " + msg)
                 {
-                    Foreground = Brushes.Black,
+                    Foreground = Brushes.White,
                     Background = Brushes.Transparent
                 };
                 Paragraph insert = new Paragraph(text) { Margin = new Thickness(0, 5, 0, 0) };

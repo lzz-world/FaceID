@@ -26,6 +26,8 @@ using static Face.WPF.Models.FaceModel;
 using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
 using System.Security;
+using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace Face.WPF.ViewModels
 {
@@ -57,9 +59,11 @@ namespace Face.WPF.ViewModels
         [ObservableProperty] private bool faceDirIsEnble = false;
         [ObservableProperty] private string account;
         [ObservableProperty] private string password;
+        [ObservableProperty] private Object contentControl;
 
-        public int LoginTabIndex { get; set; } = 0;
+        public MainWindow MainWindow { get; set; }
         public ConsoleView ConsoleObj { get; set; }
+        public int LoginTabIndex { get; set; } = 0;
         public bool[] BtnRadioIsCheck { get; set; } = new bool[50];
         public int ImageRotateFlipIndex
         {
@@ -134,23 +138,7 @@ namespace Face.WPF.ViewModels
 
             SerialPortConnect();
 
-            faseScanTask = Task.Run(async() => {
-                await Task.Delay(3000);
-                while (true)
-                {
-                    SerialWrite(2);
-                    long tTick = DateTime.Now.Ticks;
-
-                    while (true)
-                    {
-                        if (faceID != -1)
-                            Login();
-                        if ((DateTime.Now.Ticks - tTick) > (MsgVerifyData[1] * 1_000_0000))
-                            break;
-                        await Task.Delay(50);
-                    }
-                }
-            });
+            ContentControl = new LoginView();
         }
 
         [RelayCommand]
@@ -160,12 +148,27 @@ namespace Face.WPF.ViewModels
             if(LoginTabIndex == 0)
                 users = DB.Fsql.Select<UserModel>().Where(w => w.FaseId == faceID).ToList();
             else
-                users = DB.Fsql.Select<UserModel>().Where(w => HashEncrypMD5.Md5Encrypt_Key(w.Account, HashEncrypMD5.Key) == Account && HashEncrypMD5.Md5Encrypt_Key(w.Pssword, HashEncrypMD5.Key) == Password).ToList();
-
-            if (users.Count() > 0)
             {
-                MessageBox.Show("OK");
+                users = DB.Fsql.Select<UserModel>().ToList();
+                if (users.Count() > 0)
+                    users = users.Where(w => HashEncrypMD5.Md5Encrypt_Key(w.Account, HashEncrypMD5.Key) == Account && HashEncrypMD5.Md5Encrypt_Key(w.Pssword, HashEncrypMD5.Key) == Password);
             }
+
+            if (users.Count() == 0)
+            {
+                MainWindow.Width = 800;
+                ContentControl = new UserView();
+                WindowCenter();
+            }
+        }
+
+        [RelayCommand]
+        private void LogOut()
+        {
+            MainWindow.Width = 330;
+            MainWindow.ScrView.Visibility = Visibility.Hidden;
+            ContentControl = new LoginView();
+            WindowCenter();
         }
 
         /// <summary>
@@ -429,7 +432,16 @@ namespace Face.WPF.ViewModels
                 int byteToRead = sp.BytesToRead;
                 byte[] buffer = new byte[byteToRead];
 
-                int byteRead = sp.Read(buffer, 0, byteToRead);
+                int byteRead = 0;
+                try
+                {
+                    byteRead = sp.Read(buffer, 0, byteToRead);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+                
 
                 if (byteRead == 0) return;
 
@@ -583,6 +595,15 @@ namespace Face.WPF.ViewModels
                     Gl.printLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
                 }
             });
+        }
+
+        private void WindowCenter()
+        {
+            double screenWidth = SystemParameters.PrimaryScreenWidth;
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
+
+            MainWindow.Left = (screenWidth - MainWindow.Width) / 2;
+            MainWindow.Top = (screenHeight - MainWindow.Height) / 2;
         }
     }
 }

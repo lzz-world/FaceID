@@ -10,6 +10,7 @@ using System.Diagnostics.Tracing;
 using Face.WPF.Utils;
 using System.IO.Ports;
 using Face.WPF.ViewModels;
+using Face.WPF.Views;
 
 namespace Face.WPF
 {
@@ -21,20 +22,18 @@ namespace Face.WPF
         public MainWindow()
         {
             InitializeComponent();
+            ViewModel.MainWindow = this;
 
             this.CloseBtn.Click += (s, e) => Application.Current.Shutdown();
             this.SetBtn.Click += (s, e) =>
             {
+                
                 if (ScrView.Visibility == Visibility.Visible)
-                {
                     ScrView.Visibility = Visibility.Collapsed;
-                    this.Width = 330;
-                }
                 else
-                {
-                    this.Width = 520;
                     ScrView.Visibility = Visibility.Visible;
-                }
+                if(this.contentControl.Content is LoginView)
+                    this.Width = this.Width == 330 ? 520 : 330;
             };
 
             serialPort.ItemsSource = SerialPort.GetPortNames();
@@ -44,14 +43,12 @@ namespace Face.WPF
             dataBits.ItemsSource = new int[] { 5, 6, 7, 8 }.Select(s => s.ToString());
             handshake.ItemsSource = Enum.GetNames(typeof(Handshake));
 
-            Gl.showImage = (image) => videoBox.Image = image;
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             Gl.closeVideo();
             Gl.MySerialPort?.Close();
-            Gl.MySerialPort?.Dispose();
         }
     }
 }
