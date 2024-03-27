@@ -45,8 +45,8 @@ namespace Face.WPF.ViewModels
 
         public ConsoleViewModel()
         {
-            Gl.printLog = InsertMsg;
-            Gl.printLogColor = InsertMsg;
+            Gl.PrintLog = InsertMsg;
+            Gl.PrintLogColor = InsertMsg;
         }
 
         private void InsertMsg(string msg)

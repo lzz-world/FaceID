@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AForge.Video.DirectShow;
 using System.Windows.Threading;
@@ -42,8 +43,8 @@ namespace Face.WPF.ViewModels
         private Stopwatch stopwatch = new Stopwatch();
         private bool isReadImageData = false;
         private byte[] imageData;
-        private int faceID = -1;
-        private Task faseScanTask;
+        private static System.Threading.Timer heartbeatTimer;
+        private byte heartbeat = 255;
 
         [ObservableProperty] private List<string> videoList = new List<string>();
         [ObservableProperty] private int videoIndex = -1;
@@ -60,6 +61,8 @@ namespace Face.WPF.ViewModels
         [ObservableProperty] private string account;
         [ObservableProperty] private string password;
         [ObservableProperty] private Object contentControl;
+        [ObservableProperty] private string runningText;
+        [ObservableProperty] private bool isHeartbeat = true;
 
         public MainWindow MainWindow { get; set; }
         public ConsoleView ConsoleObj { get; set; }
@@ -136,7 +139,10 @@ namespace Face.WPF.ViewModels
                 videoSource.Start();
             }
 
+            //串口连接与心跳
             SerialPortConnect();
+            Gl.SerialWrite = SerialWrite;
+            heartbeatTimer = new System.Threading.Timer(TimerCallback, null, 3000, 3000);
 
             ContentControl = new LoginView();
         }
@@ -146,12 +152,15 @@ namespace Face.WPF.ViewModels
         {
             IEnumerable<UserModel> users;
             if(LoginTabIndex == 0)
-                users = DB.Fsql.Select<UserModel>().Where(w => w.FaseId == faceID).ToList();
+                users = DB.Fsql.Select<UserModel>().Where(w => w.FaseId == Gl.faceID).ToList();
             else
             {
                 users = DB.Fsql.Select<UserModel>().ToList();
                 if (users.Count() > 0)
+                {
+                    users = users.Where(w => w.Account != null && w.Pssword != null);
                     users = users.Where(w => HashEncrypMD5.Md5Encrypt_Key(w.Account, HashEncrypMD5.Key) == Account && HashEncrypMD5.Md5Encrypt_Key(w.Pssword, HashEncrypMD5.Key) == Password);
+                }  
             }
 
             if (users.Count() == 0)
@@ -238,16 +247,19 @@ namespace Face.WPF.ViewModels
                 {
                     Gl.MySerialPort.Close();
                     IsConnect = false;
+                    RunningText = "串口未连接";
                 }
                 else
                 {
                     Gl.MySerialPort.Open();
                     IsConnect = true;
+                    RunningText = String.Empty;
                 }
             }
             catch (Exception ex)
             {
                 IsConnect = false;
+                RunningText = "串口未连接";
             }
         }
 
@@ -264,8 +276,49 @@ namespace Face.WPF.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void HControl()
+        {
+            if (!IsHeartbeat)
+            {
+                heartbeatTimer.Change(0, Timeout.Infinite);
+                RunningText = String.Empty;
+            }
+            else
+                heartbeatTimer.Change(0, 3000);
+        }
+
+        private void TimerCallback(object state)
+        {
+            if (SerialPort.IsOpen)
+            {
+                SerialWrite(1);
+                long ticks = DateTime.Now.Ticks;
+                while (DateTime.Now.Ticks - ticks < 2_900_0000)
+                {
+                    if (heartbeat != 255)
+                    {
+                        Gl.faseState = 1;
+                        heartbeat = 255;
+                        RunningText = string.Empty;
+                        return;
+                    }
+                    Thread.Sleep(100);
+                }
+                Gl.faseState = 0;
+                RunningText = "串口心跳响应超时";
+            }
+            else
+            {
+                Gl.faseState = 0;
+                RunningText = "串口未连接";
+            }
+        }
+
         private void SerialWrite(int index)
         {
+            Gl.faceID = -1;
+
             byte[] bytes = new byte[] { 0xEF, 0xAA };
             byte[] bytesBuff = null;
             switch (index)
@@ -397,7 +450,7 @@ namespace Face.WPF.ViewModels
                 //0x4D 抓拍图片存储
                 case 33:
                     bytes = new byte[] { 0x4D, 0x58, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xBB, 0x00 };
-                    Gl.printLogColor(BitConverter.ToString(bytes).Replace("-", " "), blueBrush, null);
+                    Gl.PrintLogColor(BitConverter.ToString(bytes).Replace("-", " "), blueBrush, null);
                     stopwatch.Restart();
                     SerialPort.Write(bytes, 0, bytes.Length);
                     return;
@@ -406,7 +459,7 @@ namespace Face.WPF.ViewModels
             if (bytesBuff is null) return;
             byte parityCheck = UtilsHelper.PerformXOR(bytesBuff);
             bytes = bytes.Concat(bytesBuff).Append(parityCheck).ToArray();
-            Gl.printLogColor(BitConverter.ToString(bytes).Replace("-", " "), blueBrush, null);
+            Gl.PrintLogColor(BitConverter.ToString(bytes).Replace("-", " "), blueBrush, null);
             try
             {
                 stopwatch.Restart();
@@ -414,7 +467,7 @@ namespace Face.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                Gl.printLogColor(ex.Message, redBrush, null);
+                Gl.PrintLogColor(ex.Message, redBrush, null);
             }
         }
 
@@ -493,45 +546,45 @@ namespace Face.WPF.ViewModels
 
             encrypted:
                 stopwatch.Stop();
-                Gl.printLogColor(BitConverter.ToString(buffer).Replace('-', ' '), greenBrush, null);
-                Gl.printLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
+                Gl.PrintLogColor(BitConverter.ToString(buffer).Replace('-', ' '), greenBrush, null);
+                Gl.PrintLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
 
                 switch (buffer[2])
                 {
                     case 0x00: // MID_REPLY
-                        Gl.printLog(UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(buffer[6]));
+                        Gl.PrintLog(UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(buffer[6]));
                         if (buffer[6] == 0 || buffer[6] == 10) { } else return;
                         switch (buffer[5])
                         {
-                            case 0x11: Gl.printLog(UtilsHelper.GetEnumDescription<ModuleState, byte>(buffer[6])); break;
+                            case 0x11: Gl.PrintLog(UtilsHelper.GetEnumDescription<ModuleState, byte>(buffer[6])); heartbeat = buffer[6]; break;
                             case 0x12:
                                 short id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
                                 string userName = Encoding.UTF8.GetString(buffer.Skip(9).Take(32).ToArray());
                                 string isAdmin = buffer[41] == 0x00 ? "否" : "是";
                                 string unlockStatu = buffer[42] == 0x00 ? "睁眼" : "闭眼";
-                                Gl.printLog("已注册用户ID：" + id);
-                                Gl.printLog("用户名字：" + userName);
-                                Gl.printLog("是否为管理员：" + isAdmin);
-                                Gl.printLog("解锁中眼状态：" + unlockStatu);
-                                faceID = id;
+                                Gl.PrintLog("已注册用户ID：" + id);
+                                Gl.PrintLog("用户名字：" + userName);
+                                Gl.PrintLog("是否为管理员：" + isAdmin);
+                                Gl.PrintLog("解锁中眼状态：" + unlockStatu);
+                                Gl.faceID = id;
                                 break;
                             case 0x13:
                                 id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
-                                Gl.printLog("已注册用户ID：" + id);
-                                Gl.printLog("人脸朝向：" + UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[9]));
+                                Gl.PrintLog("已注册用户ID：" + id);
+                                Gl.PrintLog("人脸朝向：" + UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[9]));
                                 break;
                             case 0x1D:
                                 id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
-                                Gl.printLog("已注册用户ID：" + id);
-                                Gl.printLog("人脸朝向：" + UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[9]));
+                                Gl.PrintLog("已注册用户ID：" + id);
+                                Gl.PrintLog("人脸朝向：" + UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[9]));
                                 break;
                             case 0x22:
                                 id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
                                 userName = Encoding.UTF8.GetString(buffer.Skip(9).Take(32).ToArray());
                                 isAdmin = buffer[41] == 0x00 ? "否" : "是";
-                                Gl.printLog("已注册用户ID：" + id);
-                                Gl.printLog("用户名字：" + userName);
-                                Gl.printLog("是否为管理员：" + isAdmin);
+                                Gl.PrintLog("已注册用户ID：" + id);
+                                Gl.PrintLog("用户名字：" + userName);
+                                Gl.PrintLog("是否为管理员：" + isAdmin);
                                 break;
                             case 0x24:
                                 try
@@ -540,45 +593,46 @@ namespace Face.WPF.ViewModels
                                     string userId = string.Empty;
                                     for (int i = 0; i < allUserCount; i++)
                                         userId += BitConverter.ToInt16(new byte[] { buffer[9 + 2 * i], buffer[8 + 2 * i] }, 0).ToString() + "  ";
-                                    Gl.printLog("已注册用户数量：" + allUserCount);
-                                    Gl.printLog($"分别是：[ {userId}]");
+                                    Gl.PrintLog("已注册用户数量：" + allUserCount);
+                                    Gl.PrintLog($"分别是：[ {userId}]");
                                 }
-                                catch (Exception) { Gl.printLog("没有已录入的用户"); }
+                                catch (Exception) { Gl.PrintLog("没有已录入的用户"); }
                                 break;
                             case 0x26:
                                 if (buffer[4] == 2)
-                                    Gl.printLog("人脸重复录入");
+                                    Gl.PrintLog("人脸重复录入");
                                 else
                                 {
                                     id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
-                                    Gl.printLog("已注册用户ID：" + id);
+                                    Gl.PrintLog("已注册用户ID：" + id);
+                                    Gl.faceID = id;
                                 }
                                 break;
-                            case 0x30: Gl.printLog("版本：" + Encoding.UTF8.GetString(buffer.Skip(6).Take(32).ToArray())); break;
+                            case 0x30: Gl.PrintLog("版本：" + Encoding.UTF8.GetString(buffer.Skip(6).Take(32).ToArray())); break;
                             default: break;
                         }
                         break;
                     case 0x01: // MID_NOTE
                         try
                         {
-                            Gl.printLog(UtilsHelper.GetEnumDescription<MID_NOTE_RES, byte>(buffer[5]));
-                            Gl.printLog("人脸状态：" + UtilsHelper.GetEnumDescription<FaceState, short>(BitConverter.ToInt16(new byte[] { buffer[6], buffer[7] }, 0)));
-                            Gl.printLog("距图片最左侧距离：" + BitConverter.ToInt16(new byte[] { buffer[8], buffer[9] }, 0));
-                            Gl.printLog("距图片最上方距离：" + BitConverter.ToInt16(new byte[] { buffer[10], buffer[11] }, 0));
-                            Gl.printLog("距图片最右方距离：" + BitConverter.ToInt16(new byte[] { buffer[12], buffer[13] }, 0));
-                            Gl.printLog("距图片最下方距离：" + BitConverter.ToInt16(new byte[] { buffer[14], buffer[15] }, 0));
+                            Gl.PrintLog(UtilsHelper.GetEnumDescription<MID_NOTE_RES, byte>(buffer[5]));
+                            Gl.PrintLog("人脸状态：" + UtilsHelper.GetEnumDescription<FaceState, short>(BitConverter.ToInt16(new byte[] { buffer[6], buffer[7] }, 0)));
+                            Gl.PrintLog("距图片最左侧距离：" + BitConverter.ToInt16(new byte[] { buffer[8], buffer[9] }, 0));
+                            Gl.PrintLog("距图片最上方距离：" + BitConverter.ToInt16(new byte[] { buffer[10], buffer[11] }, 0));
+                            Gl.PrintLog("距图片最右方距离：" + BitConverter.ToInt16(new byte[] { buffer[12], buffer[13] }, 0));
+                            Gl.PrintLog("距图片最下方距离：" + BitConverter.ToInt16(new byte[] { buffer[14], buffer[15] }, 0));
                             int yawNum = BitConverter.ToInt16(new byte[] { buffer[16], buffer[17] }, 0);
                             int pitchNum = BitConverter.ToInt16(new byte[] { buffer[18], buffer[19] }, 0);
                             int rollNum = BitConverter.ToInt16(new byte[] { buffer[20], buffer[21] }, 0);
                             string yaw = yawNum < 0 ? "左转头" : yawNum > 0 ? "右转头" : yawNum.ToString();
                             string pitch = pitchNum < 0 ? "上抬头" : pitchNum > 0 ? "下低头" : pitchNum.ToString();
                             string roll = rollNum < 0 ? "右歪头" : rollNum > 0 ? "左歪头" : rollNum.ToString();
-                            Gl.printLog("yaw：" + yaw);
-                            Gl.printLog("pitch：" + pitch);
-                            Gl.printLog("roll：" + roll);
+                            Gl.PrintLog("yaw：" + yaw);
+                            Gl.PrintLog("pitch：" + pitch);
+                            Gl.PrintLog("roll：" + roll);
                             stopwatch.Restart();
                         }
-                        catch (Exception ex) { Gl.printLogColor(ex.Message, redBrush, null); }
+                        catch (Exception ex) { Gl.PrintLogColor(ex.Message, redBrush, null); }
                         break;
                     case 0x02: // MID_IMAGE
                         break;
@@ -591,8 +645,8 @@ namespace Face.WPF.ViewModels
                 if (imageData.Length >= 78320)
                 {
                     isReadImageData = false;
-                    Gl.printLogColor(BitConverter.ToString(imageData).Replace('-', ' '), greenBrush, null);
-                    Gl.printLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
+                    Gl.PrintLogColor(BitConverter.ToString(imageData).Replace('-', ' '), greenBrush, null);
+                    Gl.PrintLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
                 }
             });
         }

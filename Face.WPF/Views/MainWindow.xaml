@@ -68,7 +68,9 @@
         </Style>
         <conv:InverseBoolConverter x:Key="inverseBool" />
     </Window.Resources>
-    <DockPanel Margin="5,0,0,5" Width="auto">
+    <Grid>
+        <hc:RunningBlock Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Content="{Binding RunningText}" HorizontalContentAlignment="Left" BorderBrush="Transparent" Foreground="Red"/>
+        <DockPanel Width="auto">
         <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Right" Orientation="Horizontal">
             <StackPanel.Resources>
                 <Style TargetType="Button">
@@ -139,6 +141,7 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                     <RowDefinition />
+                                    <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="串口号" />
                                 <TextBlock Grid.Row="1" Text="波特率" />
@@ -146,13 +149,15 @@
                                 <TextBlock Grid.Row="3" Text="数据位" />
                                 <TextBlock Grid.Row="4" Text="停止位" />
                                 <TextBlock Grid.Row="5" Text="流控制" />
+                                <TextBlock Grid.Row="6" Text="心跳" />
                                 <ComboBox x:Name="serialPort" Grid.Row="0" Grid.Column="1" SelectedValue="{Binding SerialName}" />
                                 <ComboBox x:Name="baudRate" Grid.Row="1" Grid.Column="1" SelectedValue="{Binding BaudRate}" />
                                 <ComboBox x:Name="parity" Grid.Row="2" Grid.Column="1" SelectedValue="{Binding Parity}" />
                                 <ComboBox x:Name="dataBits" Grid.Row="3" Grid.Column="1" SelectedValue="{Binding DataBits}" />
                                 <ComboBox x:Name="stopBits" Grid.Row="4" Grid.Column="1" SelectedValue="{Binding StopBits}" />
                                 <ComboBox x:Name="handshake" Grid.Row="5" Grid.Column="1" SelectedValue="{Binding Handshake}" />
-                            </Grid>
+                                    <CheckBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsHeartbeat}" Command="{Binding HControlCommand}"/>
+                                </Grid>
                             <Button Command="{Binding SerialPortConnectCommand}" Style="{StaticResource SerialButtonStyle}" Tag="{Binding IsConnect}" />
                         </StackPanel>
                     </Expander>
@@ -500,4 +505,5 @@
             </ScrollViewer>
         </Grid>
     </DockPanel>
+    </Grid>
 </Window>
