@@ -16,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Avatar\avatar1.png" />
+    <None Remove="Assets\Avatar\avatar2.png" />
+    <None Remove="Assets\Avatar\avatar3.png" />
+    <None Remove="Assets\Avatar\avatar4.png" />
+    <None Remove="Assets\Avatar\avatar5.png" />
+    <None Remove="Assets\Avatar\avatar6.png" />
     <None Remove="Assets\Icon\Head.png" />
     <None Remove="Assets\Icon\Head2.png" />
   </ItemGroup>
@@ -40,6 +46,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Avatar\avatar1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Avatar\avatar2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Avatar\avatar3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Avatar\avatar4.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Avatar\avatar5.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Avatar\avatar6.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icon\Head.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

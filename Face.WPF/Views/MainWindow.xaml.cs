@@ -1,6 +1,5 @@
 ﻿using AForge.Video;
 using AForge.Video.DirectShow;
-using System.Drawing;
 using System;
 using System.Linq;
 using System.Windows;
@@ -11,6 +10,9 @@ using Face.WPF.Utils;
 using System.IO.Ports;
 using Face.WPF.ViewModels;
 using Face.WPF.Views;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace Face.WPF
 {
@@ -24,15 +26,21 @@ namespace Face.WPF
             InitializeComponent();
             ViewModel.MainWindow = this;
 
+            this.UpBtn.Click += (s, e) =>
+            {
+                SolidColorBrush brush = (SolidColorBrush)FindResource("BackgroupFour");
+                this.Topmost = this.Topmost ? false : true;
+                UpBtn.Foreground = this.Topmost ? brush : this.CloseBtn.Foreground;
+            };
+            this.MinBtn.Click += (s, e) => this.WindowState = WindowState.Minimized ;
+            this.MaxBtn.Click += (s, e) => this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
             this.CloseBtn.Click += (s, e) => Application.Current.Shutdown();
             this.SetBtn.Click += (s, e) =>
             {
-                
-                if (ScrView.Visibility == Visibility.Visible)
-                    ScrView.Visibility = Visibility.Collapsed;
-                else
-                    ScrView.Visibility = Visibility.Visible;
-                if(this.contentControl.Content is LoginView)
+                SolidColorBrush brush = (SolidColorBrush)FindResource("BackgroupFour");
+                ScrView.Visibility = ScrView.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                this.SetBtn.Foreground = ScrView.Visibility == Visibility.Visible ? brush : this.CloseBtn.Foreground;
+                if (this.contentControl.Content is LoginView)
                     this.Width = this.Width == 330 ? 520 : 330;
             };
 
@@ -42,13 +50,30 @@ namespace Face.WPF
             stopBits.ItemsSource = Enum.GetNames(typeof(StopBits));
             dataBits.ItemsSource = new int[] { 5, 6, 7, 8 }.Select(s => s.ToString());
             handshake.ItemsSource = Enum.GetNames(typeof(Handshake));
-
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             Gl.closeVideo();
             Gl.MySerialPort?.Close();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            if (button != null)
+            {
+                ToolTip toolTip = button.ToolTip as ToolTip;
+                if (toolTip != null)
+                {
+                    toolTip.IsOpen = false;
+                }
+            }
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            LogOutTBtn.IsChecked = false;
         }
     }
 }

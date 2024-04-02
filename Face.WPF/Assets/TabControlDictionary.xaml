@@ -10,11 +10,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabControl}">
-                    <Grid
-                        x:Name="templateRoot"
-                        ClipToBounds="True"
-                        KeyboardNavigation.TabNavigation="Local"
-                        SnapsToDevicePixels="True">
+                    <Grid x:Name="templateRoot" ClipToBounds="True" KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition x:Name="ColumnDefinition0" />
                             <ColumnDefinition x:Name="ColumnDefinition1" Width="0" />
@@ -23,42 +19,38 @@
                             <RowDefinition x:Name="RowDefinition0" Height="Auto" />
                             <RowDefinition x:Name="RowDefinition1" Height="*" />
                         </Grid.RowDefinitions>
-                        <UniformGrid
-                            x:Name="HeaderPanel"
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Margin="0"
-                            Panel.ZIndex="1"
-                            Background="Transparent"
-                            IsItemsHost="True"
-                            KeyboardNavigation.TabIndex="1"
-                            Rows="1" />
-                        <Line
-                            Margin="0,0,0,1"
-                            VerticalAlignment="Bottom"
-                            SnapsToDevicePixels="True"
-                            Stroke="White"
-                            StrokeThickness="0.1"
-                            X1="0"
-                            X2="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
-                        <Border
-                            x:Name="ContentPanel"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            KeyboardNavigation.DirectionalNavigation="Contained"
-                            KeyboardNavigation.TabIndex="2"
-                            KeyboardNavigation.TabNavigation="Local">
-                            <ContentPresenter
-                                x:Name="PART_SelectedContentHost"
-                                Margin="0"
-                                Content="{TemplateBinding SelectedContent}"
-                                ContentSource="SelectedContent"
-                                ContentStringFormat="{TemplateBinding SelectedContentStringFormat}"
-                                ContentTemplate="{TemplateBinding SelectedContentTemplate}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <UniformGrid x:Name="HeaderPanel"
+                                     Margin="0"
+                                     Panel.ZIndex="1"
+                                     Background="Transparent"
+                                     Grid.Column="0"
+                                     Grid.Row="0"
+                                     IsItemsHost="True"
+                                     KeyboardNavigation.TabIndex="1"
+                                     Rows="1" />
+                        <Line Margin="0,0,0,1"
+                              VerticalAlignment="Bottom"
+                              SnapsToDevicePixels="True"
+                              Stroke="White"
+                              StrokeThickness="0.1"
+                              X1="0"
+                              X2="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
+                        <Border x:Name="ContentPanel"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Grid.Column="0"
+                                Grid.Row="1"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="2"
+                                KeyboardNavigation.TabNavigation="Local">
+                            <ContentPresenter x:Name="PART_SelectedContentHost"
+                                              Margin="0"
+                                              Content="{TemplateBinding SelectedContent}"
+                                              ContentSource="SelectedContent"
+                                              ContentStringFormat="{TemplateBinding SelectedContentStringFormat}"
+                                              ContentTemplate="{TemplateBinding SelectedContentTemplate}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -108,19 +100,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
-                    <Grid
-                        x:Name="templateRoot"
-                        Background="Transparent"
-                        SnapsToDevicePixels="True">
-                        <TextBlock
-                            x:Name="txt"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{TemplateBinding Foreground}"
-                            Text="{TemplateBinding Header}"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTip="{TemplateBinding Header}"
-                            Visibility="Visible" />
+                    <Grid x:Name="templateRoot" Background="Transparent" SnapsToDevicePixels="True">
+                        <TextBlock x:Name="txt"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   Text="{TemplateBinding Header}"
+                                   TextTrimming="CharacterEllipsis"
+                                   ToolTip="{TemplateBinding Header}"
+                                   Visibility="Visible" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <MultiDataTrigger>
@@ -185,27 +173,18 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
-                    <Grid
-                        x:Name="templateRoot"
-                        Background="Transparent"
-                        SnapsToDevicePixels="True">
-                        <Border
-                            x:Name="_underline"
-                            Width="80"
-                            Margin="{TemplateBinding Margin}"
-                            BorderBrush="White"
-                            BorderThickness="0" />
+                    <Grid x:Name="templateRoot" Background="Transparent" SnapsToDevicePixels="True">
+                        <Border x:Name="_underline" Margin="{TemplateBinding Margin}" BorderBrush="White" BorderThickness="0" Width="80" />
                         <Grid>
-                            <TextBlock
-                                x:Name="txt"
-                                Margin="0,0,0,10"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{TemplateBinding Foreground}"
-                                Text="{TemplateBinding Header}"
-                                TextTrimming="CharacterEllipsis"
-                                ToolTip="{TemplateBinding Header}"
-                                Visibility="Visible" />
+                            <TextBlock x:Name="txt"
+                                       Margin="0,0,0,10"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       Text="{TemplateBinding Header}"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip="{TemplateBinding Header}"
+                                       Visibility="Visible" />
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>

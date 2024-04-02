@@ -59,7 +59,7 @@ namespace Face.WPF.Models
         [Description("女")] Women
     }
 
-    public enum DepartmentType
+    public enum DepartmentType : byte
     {
         [Description("生产一部")] ProduceOne,
         [Description("生产二部")] ProduceTwo,

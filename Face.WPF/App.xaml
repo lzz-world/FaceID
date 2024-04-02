@@ -1,4 +1,5 @@
-﻿<Application x:Class="Face.WPF.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Face.WPF" StartupUri="Views/MainWindow.xaml">
+﻿<Application x:Class="Face.WPF.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Face.WPF" StartupUri="Views/MainWindow.xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -20,7 +21,7 @@
             <Style x:Key="FaseInfoStyle" TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Right" />
                 <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Margin" Value="5,5,5,5" />
+                <Setter Property="Margin" Value="5 10" />
                 <Setter Property="FontWeight" Value="Medium" />
             </Style>
 
@@ -62,6 +63,36 @@
                         <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="#51b5ff" />
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+            <Style TargetType="hc:TextBox" BasedOn="{StaticResource TextBoxPlusBaseStyle}">
+                <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BackgroupThree}" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+            </Style>
+
+            <Style x:Key="hcPasswordBoxStyle"  TargetType="hc:PasswordBox">
+                <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BackgroupThree}" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                <Setter Property="FontWeight" Value="Medium" />
+            </Style>
+
+            <Style x:Key="ComboBoxItemStyle" BasedOn="{StaticResource ComboBoxItem.Small}" TargetType="ComboBoxItem">
+                <Setter Property="Foreground" Value="Black" />
+                <Setter Property="FontWeight" Value="Medium" />
+            </Style>
+
+            <Style BasedOn="{StaticResource DataGridEditingComboBoxColumnStyle.Small}" TargetType="ComboBox">
+                <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BackgroupThree}" />
+                <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                <Setter Property="FontWeight" Value="Medium" />
+                <Setter Property="ItemContainerStyle" Value="{StaticResource ComboBoxItemStyle}"/>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing.Printing;
 using System.IO.Ports;
+using Face.WPF.Models;
 
 namespace Face.WPF.Utils
 {
@@ -15,6 +16,8 @@ namespace Face.WPF.Utils
     {
         public static bool windowClose = false;
         public static int faceID = -1;
+        public static int faceUserID = -1;
+        public static int scanFaceTimeOut = 10;
         public static int faseState = 0;
 
         public static Action closeVideo;
@@ -25,5 +28,6 @@ namespace Face.WPF.Utils
 
         public static SerialPort MySerialPort { get; set; }
         public static Action<int> SerialWrite { get; set; }
+        public static Action<UserModel> Login { get; set; }
     }
 }
