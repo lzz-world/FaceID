@@ -1,0 +1,327 @@
+﻿<UserControl x:Class="Face.WPF.Views.UserView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cons="clr-namespace:ValueConverters;assembly=ValueConverters"
+             xmlns:conv="clr-namespace:Face.WPF.Utils.Converters"
+             xmlns:dps="clr-namespace:Face.WPF.Utils.DPropertys"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:Face.WPF.Views"
+             xmlns:view="clr-namespace:Face.WPF.Views"
+             xmlns:vm="clr-namespace:Face.WPF.ViewModels">
+    <UserControl.DataContext>
+        <vm:UserViewModel x:Name="ViewModel" />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+
+        <conv:UserInfoConverter x:Key="enumToStr" />
+        <cons:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <conv:DataGridHeaderConverter x:Key="DataGridHeaderConverter" />
+
+        <Style BasedOn="{StaticResource TabItemExWithUnderLineStyle}" TargetType="TabItem">
+            <Setter Property="FontWeight" Value="Medium" />
+        </Style>
+
+    </UserControl.Resources>
+    <Grid Margin="0,0,0,0">
+        <TabControl x:Name="tabControl"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    SelectionChanged="tabControl_SelectionChanged"
+                    Style="{StaticResource BaseStyle}"
+                    Tag="Collapsed">
+            <TabItem Header="超级管理员" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+                <Border BorderBrush="{StaticResource UserBackgroupBrush}" BorderThickness="1" CornerRadius="5">
+                    <view:ConsoleView />
+                </Border>
+            </TabItem>
+            <TabItem Header="管理员" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+                <StackPanel>
+                    <hc:DrawerContainer Grid.Row="1">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <ToggleButton Margin="5,0,10,0"
+                                                  Command="{Binding UserAddTabCommand}"
+                                                  Content="添加"
+                                                  Foreground="White"
+                                                  IsChecked="{Binding ElementName=DrawerLeftInContainer, Path=IsOpen}"
+                                                  Style="{StaticResource ToggleBtnBaseStyle}"
+                                                  Width="60" />
+                                    <Button Margin="0,0,10,0" Command="{Binding UserSelectedCommand}" CommandParameter="All"  Content="全选" Style="{StaticResource ButtonBaseStyle}" />
+                                    <Button Margin="0,0,10,0" Command="{Binding UserSelectedCommand}" CommandParameter="Invert" Content="反选" Style="{StaticResource ButtonBaseStyle}" />
+                                    <Button Margin="0,0,10,0" Command="{Binding UserDelectedCommand}" Content="删除" Style="{StaticResource ButtonBaseStyle}" />
+                                </StackPanel>
+                                <Grid Grid.Row="1" Height="670" Width="795">
+                                    <DataGrid AutoGenerateColumns="False"
+                                              CanUserSortColumns="False"
+                                              CellStyle="{StaticResource MyDataGridCellStyle}"
+                                              ColumnHeaderStyle="{StaticResource MyDataGridColumnHeaderStyle}"
+                                              IsReadOnly="True"
+                                              ItemsSource="{Binding Users}"
+                                              RowStyle="{StaticResource MyDataGridRowStyle}"
+                                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                              Style="{StaticResource MyDataGridStyle}">
+                                        <DataGrid.Columns>
+                                            <DataGridTemplateColumn>
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding IsCheck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn Binding="{Binding UserModel.Id}" Header="ID" />
+                                            <DataGridTextColumn Binding="{Binding UserModel.FaseId}" Header="面部ID" />
+                                            <DataGridTextColumn Binding="{Binding UserModel.Account}" Header="工号" />
+                                            <DataGridTextColumn Binding="{Binding UserModel.Name}" Header="姓名" />
+                                            <DataGridTextColumn Binding="{Binding UserModel.Gender, Converter={StaticResource enumToStr}}" Header="性别" />
+                                            <DataGridTextColumn Binding="{Binding UserModel.Department, Converter={StaticResource enumToStr}}" Header="部门" />
+                                            <DataGridTextColumn Binding="{Binding UserModel.Position}" Header="职位" />
+                                            <DataGridTextColumn Binding="{Binding UserModel.Auth, Converter={StaticResource enumToStr}}" Header="头像" />
+                                            <DataGridTextColumn Binding="{Binding UserModel.Auth, Converter={StaticResource enumToStr}}" Header="权限" />
+                                            <DataGridTemplateColumn Header="编辑">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ToggleButton Background="Transparent"
+                                                                      BorderBrush="Transparent"
+                                                                      Command="{Binding Path=DataContext.(vm:UserViewModel.UserEditCommand), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                                                      CommandParameter="{Binding UserModel}"
+                                                                      Content="编辑"
+                                                                      Foreground="{StaticResource BackgroupFive}"
+                                                                      IsChecked="{Binding ElementName=DrawerLeftInContainer, Path=IsOpen}" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                            </Grid>
+                            <hc:Drawer Name="DrawerLeftInContainer" Dock="Left" Height="665" ShowMode="Push">
+                                <Border Background="{StaticResource BackgroupOne}" BorderBrush="{DynamicResource BorderBrush}" CornerRadius="4" Width="320">
+                                    <TabControl Margin="0,5,0,0" Background="Transparent" BorderBrush="Transparent" SelectedIndex="{Binding UserRegisterTabIndex}" Style="{StaticResource TabControlStyle}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="SelectionChanged">
+                                                <i:InvokeCommandAction Command="{Binding RegisterTabSelectionChangedCommand}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <TabItem Header="{Binding AddText, Converter={StaticResource DataGridHeaderConverter}, ConverterParameter=Face}" Style="{StaticResource TabItemExWithUnderLineStyle}">
+                                            <StackPanel>
+                                                <Grid Margin="0,0,0,3">
+                                                    <view:VedioView Visibility="Visible" />
+                                                </Grid>
+                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="False">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="1.2*" />
+                                                        <ColumnDefinition Width="4*" />
+                                                        <ColumnDefinition Width="2*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.Resources>
+                                                        <Style BasedOn="{StaticResource TextBoxBaseStyle}" TargetType="TextBox">
+                                                            <Setter Property="FontWeight" Value="Medium" />
+                                                            <Setter Property="Margin" Value="0,1,0,0" />
+                                                            <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+                                                            <Setter Property="BorderBrush" Value="{StaticResource BackgroupThree}" />
+                                                            <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                                                        </Style>
+                                                    </Grid.Resources>
+                                                    <StackPanel HorizontalAlignment="Right" Grid.Row="0" Orientation="Horizontal">
+                                                        <TextBlock Foreground="Red" Text="*" />
+                                                        <TextBlock Style="{StaticResource FaseInfoStyle}" Text="姓名" />
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Row="1" Style="{StaticResource FaseInfoStyle}" Text="工号" />
+                                                    <StackPanel HorizontalAlignment="Right" Grid.Row="2" Orientation="Horizontal">
+                                                        <TextBlock Foreground="Red" Text="*" />
+                                                        <TextBlock Style="{StaticResource FaseInfoStyle}" Text="部门" />
+                                                    </StackPanel>
+
+                                                    <TextBlock Grid.Row="3" Style="{StaticResource FaseInfoStyle}" Text="职位" />
+                                                    <StackPanel HorizontalAlignment="Right" Grid.Row="4" Orientation="Horizontal">
+                                                        <TextBlock Foreground="Red" Text="*" />
+                                                        <TextBlock Style="{StaticResource FaseInfoStyle}" Text="权限" />
+                                                    </StackPanel>
+                                                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding UserName, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Account, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                                    <ComboBox Grid.Column="1" Grid.Row="2" SelectedIndex="{Binding DepartmentIndex}">
+                                                        <ComboBoxItem>生产一部</ComboBoxItem>
+                                                        <ComboBoxItem>生产二部</ComboBoxItem>
+                                                        <ComboBoxItem>生产三部</ComboBoxItem>
+                                                    </ComboBox>
+                                                    <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Position, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                                    <ComboBox Margin="0,1,0,0" Grid.Column="1" Grid.Row="4" SelectedIndex="{Binding AuthIndex}">
+                                                        <ComboBoxItem>管理员</ComboBoxItem>
+                                                        <ComboBoxItem>操作员</ComboBoxItem>
+                                                        <ComboBoxItem>维护员</ComboBoxItem>
+                                                        <ComboBoxItem>访客</ComboBoxItem>
+                                                    </ComboBox>
+                                                    <ComboBox Margin="10,0" HorizontalContentAlignment="Center" Grid.Column="2" Grid.Row="0" SelectedIndex="{Binding GenderIndex}">
+                                                        <ComboBoxItem>男</ComboBoxItem>
+                                                        <ComboBoxItem>女</ComboBoxItem>
+                                                    </ComboBox>
+                                                    <TextBox Margin="10,0"
+                                                             HorizontalContentAlignment="Center"
+                                                             Grid.Column="2"
+                                                             Grid.Row="1"
+                                                             IsReadOnly="True"
+                                                             Text="{Binding FaseID}"
+                                                             ToolTip="脸部ID" />
+                                                    <TextBlock FontWeight="Medium"
+                                                               Foreground="Red"
+                                                               Grid.Column="2"
+                                                               Grid.Row="1"
+                                                               Grid.RowSpan="3"
+                                                               Text="{Binding ErrorTips}"
+                                                               TextWrapping="WrapWithOverflow" />
+                                                    <hc:LoadingCircle Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" Visibility="{Binding IsRegisterProcess, Converter={StaticResource BoolToVisibility}}" />
+                                                    <Image Grid.Column="2"
+                                                           Grid.Row="2"
+                                                           Grid.RowSpan="2"
+                                                           Source="/Assets/Icon/success.png"
+                                                           Visibility="{Binding IsRegisterSuccess, Converter={StaticResource BoolToVisibility}}"
+                                                           Width="40" />
+                                                    <!--<CheckBox HorizontalAlignment="Center"
+                                                              Background="Green"
+                                                              BorderBrush="Green"
+                                                              Grid.Column="2"
+                                                              Grid.Row="1"
+                                                              Grid.RowSpan="3"
+                                                              IsChecked="{Binding IsRegisterSuccess}"
+                                                              Style="{StaticResource CheckBoxBaseStyle}"
+                                                              Visibility="{Binding IsRegisterSuccess, Converter={StaticResource BoolToVisibility}}" />-->
+                                                    <Button Margin="10,0"
+                                                            HorizontalAlignment="Stretch"
+                                                            Command="{Binding UserRegisterCommand}"
+                                                            Content="{Binding AddText}"
+                                                            Grid.Column="2"
+                                                            Grid.Row="4"
+                                                            Style="{StaticResource ButtonBaseStyle}" />
+                                                </Grid>
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem Header="{Binding AddText, Converter={StaticResource DataGridHeaderConverter}, ConverterParameter=Account}" Style="{StaticResource TabItemExWithUnderLineStyle}">
+                                            <Grid Margin="0,20,20,0" VerticalAlignment="Top" Height="350" ShowGridLines="False">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="1.5*" />
+                                                    <ColumnDefinition Width="5*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+                                                <Grid.Resources>
+                                                    <Style BasedOn="{StaticResource TextBoxBaseStyle}" TargetType="TextBox">
+                                                        <Setter Property="FontWeight" Value="Medium" />
+                                                        <Setter Property="Margin" Value="0,2,0,0" />
+                                                        <Setter Property="FontWeight" Value="Medium" />
+                                                        <Setter Property="Margin" Value="0,1,0,0" />
+                                                        <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+                                                        <Setter Property="BorderBrush" Value="{StaticResource BackgroupThree}" />
+                                                        <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                                                    </Style>
+                                                </Grid.Resources>
+                                                <StackPanel HorizontalAlignment="Right" Grid.Row="0" Orientation="Horizontal">
+                                                    <TextBlock Foreground="Red" Text="*" />
+                                                    <TextBlock Style="{StaticResource FaseInfoStyle}" Text="姓名" />
+                                                </StackPanel>
+
+                                                <StackPanel HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
+                                                    <TextBlock Foreground="Red" Text="*" />
+                                                    <TextBlock Style="{StaticResource FaseInfoStyle}" Text="工号" />
+                                                </StackPanel>
+                                                <StackPanel HorizontalAlignment="Right" Grid.Row="2" Orientation="Horizontal">
+                                                    <TextBlock Foreground="Red" Text="*" />
+                                                    <TextBlock Style="{StaticResource FaseInfoStyle}" Text="部门" />
+                                                </StackPanel>
+
+                                                <TextBlock Grid.Row="3" Style="{StaticResource FaseInfoStyle}" Text="职位" />
+                                                <TextBlock Grid.Row="4" Style="{StaticResource FaseInfoStyle}" Text="性别" />
+
+                                                <StackPanel HorizontalAlignment="Right" Grid.Row="5" Orientation="Horizontal">
+                                                    <TextBlock Foreground="Red" Text="*" />
+                                                    <TextBlock Style="{StaticResource FaseInfoStyle}" Text="权限" />
+                                                </StackPanel>
+                                                <StackPanel HorizontalAlignment="Right" Grid.Row="6" Orientation="Horizontal">
+                                                    <TextBlock Foreground="Red" Text="*" />
+                                                    <TextBlock Style="{StaticResource FaseInfoStyle}" Text="登录密码" />
+                                                </StackPanel>
+                                                <StackPanel HorizontalAlignment="Right" Grid.Row="7" Orientation="Horizontal">
+                                                    <TextBlock Foreground="Red" Text="*" />
+                                                    <TextBlock Style="{StaticResource FaseInfoStyle}" Text="确认密码" />
+                                                </StackPanel>
+
+                                                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding UserName, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Account, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                                <ComboBox Grid.Column="1" Grid.Row="2" SelectedIndex="{Binding DepartmentIndex}">
+                                                    <ComboBoxItem>生产一部</ComboBoxItem>
+                                                    <ComboBoxItem>生产二部</ComboBoxItem>
+                                                    <ComboBoxItem>生产三部</ComboBoxItem>
+                                                </ComboBox>
+                                                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Position, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                                                <ComboBox Grid.Column="1" Grid.Row="4" SelectedIndex="{Binding GenderIndex}">
+                                                    <ComboBoxItem>男</ComboBoxItem>
+                                                    <ComboBoxItem>女</ComboBoxItem>
+                                                </ComboBox>
+                                                <ComboBox Margin="0,1,0,0" Grid.Column="1" Grid.Row="5" SelectedIndex="{Binding AuthIndex}">
+                                                    <ComboBoxItem>管理员</ComboBoxItem>
+                                                    <ComboBoxItem>操作员</ComboBoxItem>
+                                                    <ComboBoxItem>维护员</ComboBoxItem>
+                                                    <ComboBoxItem>访客</ComboBoxItem>
+                                                </ComboBox>
+                                                <PasswordBox Margin="0,2,0,0" dps:PasswordBoxHelper.Attach="True" dps:PasswordBoxHelper.Password="{Binding Pw, ValidatesOnDataErrors=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="6" />
+                                                <PasswordBox Margin="0,2,0,0" dps:PasswordBoxHelper.Attach="True" dps:PasswordBoxHelper.Password="{Binding RePw, ValidatesOnDataErrors=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="7" />
+                                                <Button HorizontalAlignment="Stretch"
+                                                        Command="{Binding UserRegisterCommand}"
+                                                        Content="{Binding AddText, StringFormat={}}"
+                                                        Grid.Column="1"
+                                                        Grid.Row="8"
+                                                        Style="{StaticResource ButtonBaseStyle}" />
+                                                <TextBlock FontWeight="Medium" Foreground="Red" Grid.Column="1" Grid.Row="9" Text="{Binding ErrorTips}" />
+                                                <Image Grid.Column="1" Grid.Row="9" Source="/Assets/Icon/success.png" Visibility="{Binding IsRegisterSuccess, Converter={StaticResource BoolToVisibility}}" />
+                                                <!--<CheckBox HorizontalAlignment="Center"
+                                                          Background="Green"
+                                                          BorderBrush="Green"
+                                                          Grid.Column="1"
+                                                          Grid.Row="9"
+                                                          IsChecked="{Binding IsRegisterSuccess}"
+                                                          Style="{StaticResource CheckBoxBaseStyle}"
+                                                          Visibility="{Binding IsRegisterSuccess, Converter={StaticResource BoolToVisibility}}" />-->
+                                            </Grid>
+                                        </TabItem>
+                                    </TabControl>
+                                </Border>
+                            </hc:Drawer>
+                        </StackPanel>
+                    </hc:DrawerContainer>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="操作员" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+                <TextBlock Margin="300,0,0,0" FontSize="50" Foreground="White" Text="操作员" />
+            </TabItem>
+            <TabItem Header="维护员" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+                <TextBlock Margin="300,0,0,0" FontSize="50" Foreground="White" Text="维护" />
+            </TabItem>
+            <TabItem Header="访客" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+                <TextBlock Margin="300,0,0,0" FontSize="50" Foreground="White" Text="访客" />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

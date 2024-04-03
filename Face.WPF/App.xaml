@@ -6,6 +6,7 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
                 <ResourceDictionary Source="./Assets/TabControlDictionary.xaml" />
+                <ResourceDictionary Source="./Assets/DataGridDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <SolidColorBrush x:Key="BackgroupDefualt" Color="#001231" />
@@ -94,6 +95,92 @@
                 <Setter Property="FontWeight" Value="Medium" />
                 <Setter Property="ItemContainerStyle" Value="{StaticResource ComboBoxItemStyle}"/>
             </Style>
+
+            <!--#region DataGrid样式-->
+            <!--  all datagrid  -->
+            <!--  DataGrid网格样式  -->
+            <Style x:Key="MyDataGridStyle" BasedOn="{StaticResource DataGridBaseStyle}" TargetType="{x:Type DataGrid}">
+                <Setter Property="SelectionUnit" Value="FullRow" />
+                <Setter Property="Background" Value="{StaticResource BackgroupOne}" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="AutoGenerateColumns" Value="False" />
+                <Setter Property="CanUserAddRows" Value="False" />
+                <Setter Property="CanUserDeleteRows" Value="True" />
+                <Setter Property="CanUserSortColumns" Value="True" />
+                <Setter Property="CanUserResizeColumns" Value="True" />
+                <Setter Property="CanUserResizeRows" Value="True" />
+                <Setter Property="BorderBrush" Value="{StaticResource BackgroupOne}" />
+                <Setter Property="GridLinesVisibility" Value="None" />
+                <Setter Property="HorizontalGridLinesBrush">
+                    <Setter.Value>
+                        <SolidColorBrush Color="#ced4da" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="VerticalGridLinesBrush">
+                    <Setter.Value>
+                        <SolidColorBrush Color="#c2c2c2" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--  标题栏样式  -->
+            <Style x:Key="MyDataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                <Setter Property="FontWeight" Value="Medium" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Margin" Value="15 0 15 0" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+
+            <!--  行样式触发  -->
+            <Style x:Key="MyDataGridRowStyle" BasedOn="{StaticResource DataGridRowStyle.Small}" TargetType="DataGridRow">
+                <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+                <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                <Setter Property="Height" Value="auto" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{StaticResource BackgroupThree}" />
+                        <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{StaticResource BackgroupThree}" />
+                        <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--  单元格样式触发  -->
+            <Style x:Key="MyDataGridCellStyle" TargetType="DataGridCell">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#0078D7" />
+                </Style.Resources>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DataGridCell">
+                            <TextBlock VerticalAlignment="Center" TextAlignment="Center">
+                        <ContentPresenter />
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                        <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Foreground" Value="{StaticResource ForgroupBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--#endregion-->
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

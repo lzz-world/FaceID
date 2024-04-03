@@ -24,6 +24,7 @@
     <None Remove="Assets\Avatar\avatar6.png" />
     <None Remove="Assets\Icon\Head.png" />
     <None Remove="Assets\Icon\Head2.png" />
+    <None Remove="Assets\Icon\success.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,6 +69,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icon\Head2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icon\success.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="Face.WPF.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
+             xmlns:dps="clr-namespace:Face.WPF.Utils.DPropertys"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:Face.WPF.Views"
+             xmlns:view="clr-namespace:Face.WPF.Views"
+             xmlns:vm="clr-namespace:Face.WPF.ViewModels">
+    <UserControl.DataContext>
+        <vm:LoginViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="boolToVi" />
+    </UserControl.Resources>
+    <Grid Width="320">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Image Source="\Assets\Icon\Head2.png" Width="60" />
+        <TabControl Background="Transparent" BorderBrush="Transparent" Grid.Row="1" SelectedIndex="{Binding LoginTabIndex}" Style="{StaticResource TabControlStyle}">
+            <TabItem Header="人脸识别登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
+                <StackPanel>
+                    <view:VedioView Margin="0,5,0,5" />
+                    <Grid ShowGridLines="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource FaseInfoStyle}" Text="ID :"/>
+                        <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource FaseInfoStyle}" Text="姓名 :" />
+                        <TextBlock Grid.Column="0" Grid.Row="2" Style="{StaticResource FaseInfoStyle}" Text="部门 :" />
+                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding UserInfo[0]}" />
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding UserInfo[1]}" />
+                        <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding UserInfo[2]}" />
+                        <hc:LoadingCircle Grid.Column="2" Grid.RowSpan="3" Visibility="{Binding IsLoading, Converter={StaticResource boolToVi}}" />
+                        <Image Source="/Assets/Icon/success.png" Width="50" Grid.Column="2" Grid.RowSpan="3" Visibility="{Binding IsSuccess, Converter={StaticResource boolToVi}}"/>
+                        <!--<Canvas Grid.Column="2" Grid.RowSpan="3" Visibility="{Binding IsSuccess, Converter={StaticResource boolToVi}}">
+                            <Ellipse Width="50" Height="50" Fill="Green" Canvas.Top="30" Canvas.Left="15"/>
+                            <Path Stroke="White" StrokeThickness="3" Canvas.Top="35" Canvas.Left="20">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathGeometry.Figures>
+                                            <PathFigureCollection>
+                                                <PathFigure StartPoint="5, 20">
+                                                    <LineSegment Point="15, 30"/>
+                                                    <LineSegment Point="35, 10"/>
+                                                </PathFigure>
+                                            </PathFigureCollection>
+                                        </PathGeometry.Figures>
+                                    </PathGeometry>
+                                </Path.Data>
+                            </Path>
+                        </Canvas>-->
+                        <TextBlock Grid.Column="2" Grid.RowSpan="3" FontWeight="Medium" Foreground="Red" TextWrapping="Wrap"  Text="{Binding ErrorTips}" />
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="账号密码登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
+                <Grid Margin="0,30" VerticalAlignment="Top" Height="200" ShowGridLines="False">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <hc:TextBox hc:InfoElement.Placeholder="请输入工号"
+                                hc:InfoElement.ShowClearButton="True"
+                                FontWeight="Medium"
+                                Grid.Row="0"
+                                Height="35"
+                                Text="{Binding Account}"
+                                Width="250" />
+                    <hc:PasswordBox x:Name="password"
+                                    HorizontalContentAlignment="Left"
+                                    VerticalContentAlignment="Center"
+                                    hc:InfoElement.Placeholder="请输入密码"
+                                    hc:InfoElement.ShowClearButton="True"
+                                    Background="{StaticResource BackgroupTwo}"
+                                    BorderBrush="{StaticResource BackgroupThree}"
+                                    FontWeight="Medium"
+                                    Foreground="{StaticResource ForgroupBrush}"
+                                    Grid.Row="1"
+                                    Height="35"
+                                    ShowEyeButton="True"
+                                    Width="250" />
+                    <Button Command="{Binding LoginCommand}"
+                            CommandParameter="{Binding ElementName=password}"
+                            Content="登   录"
+                            Grid.Row="2"
+                            Height="35"
+                            Style="{StaticResource ButtonBaseStyle}"
+                            Width="250" />
+                    <TextBlock FontWeight="Medium" Foreground="Red" Grid.Row="3" Text="{Binding ErrorTips}" />
+                    <hc:LoadingLine Margin="100,0" DotDelayTime="2" DotInterval="20" DotSpeed="1" Grid.Row="3" Visibility="{Binding IsLoading, Converter={StaticResource boolToVi}}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>
