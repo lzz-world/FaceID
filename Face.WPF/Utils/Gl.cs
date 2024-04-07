@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Drawing.Printing;
 using System.IO.Ports;
 using Face.WPF.Models;
+using static Face.WPF.Models.FaceModel;
 
 namespace Face.WPF.Utils
 {
@@ -18,6 +19,7 @@ namespace Face.WPF.Utils
         public static int faceID = -1;
         public static int faceUserID = -1;
         public static int scanFaceTimeOut = 10;
+        public static byte faseReplyRes = 0x00;
         public static int faseState = 0;
 
         public static Action closeVideo;

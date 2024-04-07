@@ -58,24 +58,24 @@
 
         <Style BasedOn="{StaticResource ExpanderBaseStyle}" TargetType="Expander">
             <Setter Property="Margin" Value="0,1" />
-            <Setter Property="Background" Value="{StaticResource BackgroupTwo}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BackgroupTwo}"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource BackgroupTwo}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BackgroupTwo}" />
+            <Setter Property="Foreground" Value="White" />
         </Style>
 
         <Style BasedOn="{StaticResource ListBoxBaseStyle}" TargetType="ListBox">
-            <Setter Property="Background" Value="{StaticResource BackgroupOne}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BackgroupOne}"/>
+            <Setter Property="Background" Value="{StaticResource BackgroupOne}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BackgroupOne}" />
         </Style>
 
-        <Style x:Key="ListBoxItemStyle"  TargetType="ListBoxItem" BasedOn="{StaticResource BaseStyle}">
-            <Setter Property="Background" Value="{StaticResource BackgroupOne}"/>
-            <Setter Property="Margin" Value=" 0 2.5"/>
-            <Setter Property="BorderThickness" Value="0.5"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+        <Style x:Key="ListBoxItemStyle" BasedOn="{StaticResource BaseStyle}" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="{StaticResource BackgroupOne}" />
+            <Setter Property="Margin" Value="0,2.5" />
+            <Setter Property="BorderThickness" Value="0.5" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
         </Style>
-        
+
         <conv:InverseBoolConverter x:Key="inverseBool" />
     </Window.Resources>
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
@@ -126,7 +126,7 @@
                     </Image>
                 </Button>
                 <ToggleButton x:Name="LogOutTBtn" Background="Transparent" BorderBrush="Transparent" IsChecked="{Binding IsLogOutCheck}" WindowChrome.IsHitTestVisibleInChrome="False" />
-                <Popup Focusable="True" AllowsTransparency="True" IsOpen="{Binding IsChecked, ElementName=LogOutTBtn, Mode=OneWay}" PlacementTarget="{Binding ElementName=LogOutTBtn}">
+                <Popup AllowsTransparency="True" Focusable="True" IsOpen="{Binding IsChecked, ElementName=LogOutTBtn, Mode=OneWay}" PlacementTarget="{Binding ElementName=LogOutTBtn}">
                     <Border Background="{StaticResource BackgroupOne}" BorderBrush="{StaticResource BackgroupThree}" BorderThickness="0.5" CornerRadius="10">
                         <Grid Height="200" ShowGridLines="False" Width="165">
                             <Grid.RowDefinitions>
@@ -183,10 +183,8 @@
                 <ScrollViewer x:Name="ScrView"
                               Margin="5,0,0,0"
                               CanContentScroll="True"
-                              
                               Grid.Column="1"
                               MaxWidth="185"
-                              
                               Visibility="Collapsed">
                     <StackPanel>
                         <Expander>
@@ -207,8 +205,8 @@
                             </ListBox>
                         </Expander>
                         <Expander Header="图像旋转">
-                            <ListBox SelectedIndex="{Binding ImageRotateFlipIndex}" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
-                                <ListBoxItem>无旋转无翻转</ListBoxItem>C
+                            <ListBox ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedIndex="{Binding ImageRotateFlipIndex}">
+                                <ListBoxItem>无旋转无翻转</ListBoxItem>
                                 <ListBoxItem>旋转90°无翻转</ListBoxItem>
                                 <ListBoxItem>旋转180°无翻转</ListBoxItem>
                                 <ListBoxItem>旋转270°无翻转</ListBoxItem>
@@ -222,7 +220,7 @@
                             <StackPanel Background="{StaticResource BackgroupOne}">
                                 <Grid Height="200" IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect), Converter={StaticResource inverseBool}}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="50"/>
+                                        <ColumnDefinition Width="50" />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
@@ -257,10 +255,10 @@
                                 <ScrollViewer Height="360">
                                     <StackPanel>
                                         <StackPanel.Resources>
-                                            <Style TargetType="RadioButton" BasedOn="{StaticResource RadioButtonBaseStyle}">
-                                                <Setter Property="HorizontalAlignment" Value="Left"/>
-                                                <Setter Property="Foreground" Value="White"/>
-                                                <Setter Property="Margin" Value="0 2"/>
+                                            <Style BasedOn="{StaticResource RadioButtonBaseStyle}" TargetType="RadioButton">
+                                                <Setter Property="HorizontalAlignment" Value="Left" />
+                                                <Setter Property="Foreground" Value="White" />
+                                                <Setter Property="Margin" Value="10,2,0,2" />
                                             </Style>
                                         </StackPanel.Resources>
                                         <RadioButton Command="{Binding SwitchMidCommand}" GroupName="MID" IsChecked="{Binding BtnRadioIsCheck[0]}">0x10 停止当前处理</RadioButton>
@@ -299,7 +297,7 @@
                                         <RadioButton Command="{Binding SwitchMidCommand}" GroupName="MID" IsChecked="{Binding BtnRadioIsCheck[33]}">0x4D 抓拍图片存储</RadioButton>
                                     </StackPanel>
                                 </ScrollViewer>
-                                <hc:Divider Content="参数设置" Margin="0 20 0 0" Foreground="{StaticResource BackgroupFive}"/>
+                                <hc:Divider Margin="0,20,0,0" Content="参数设置" Foreground="{StaticResource BackgroupFive}" />
                                 <Border BorderThickness="1" CornerRadius="10" Height="300">
                                     <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource BackgroupOne}" IsEnabled="{Binding Path=(vm:MainViewModel.IsConnect)}">
                                         <TabControl Margin="0,5,0,0"
@@ -584,11 +582,11 @@
                                             </TabItem>
                                         </TabControl>
                                         <Button Margin="5"
-                                                Style="{StaticResource ButtonBaseStyle}"
                                                 VerticalAlignment="Bottom"
                                                 Command="{Binding SerialSendCommand}"
                                                 Content="发 送"
                                                 DockPanel.Dock="Bottom"
+                                                Style="{StaticResource ButtonBaseStyle}"
                                                 Width="100" />
                                     </DockPanel>
                                 </Border>

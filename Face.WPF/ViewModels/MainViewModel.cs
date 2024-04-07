@@ -508,98 +508,101 @@ namespace Face.WPF.ViewModels
         /// <param name="e"></param>
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
-            Task.Run(() =>
+            SerialPort sp = (SerialPort)sender;
+
+            int byteToRead = sp.BytesToRead;
+            byte[] buffer = new byte[byteToRead];
+
+            int byteRead = 0;
+            try
             {
-                SerialPort sp = (SerialPort)sender;
+                byteRead = sp.Read(buffer, 0, byteToRead);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
 
-                int byteToRead = sp.BytesToRead;
-                byte[] buffer = new byte[byteToRead];
 
-                int byteRead = 0;
-                try
+            if (byteRead == 0) return;
+            Debug.WriteLine(DateTime.Now.ToString() + "\t" + BitConverter.ToString(buffer).Replace('-', ' '));
+
+            //条件跳过
+            if (isReadImageData) goto readImage;
+            else if (buffer[0] == 0x6D && buffer[1] == 0x78)
+            {
+                imageData = new byte[] { }.Concat(buffer).ToArray();
+                isReadImageData = true;
+                goto readImage;
+            }
+            else if (buffer[3] == 0x19) goto encrypted;
+
+            #region 数据分包传输，长度不对需拼接
+            if (buffer.First() == 0xEF)
+            {
+                int byteSize = BitConverter.ToInt16(new byte[] { buffer[4], buffer[3] }, 0) + 5 + 1;
+                if (buffer.Length != byteSize)
                 {
-                    byteRead = sp.Read(buffer, 0, byteToRead);
+                    var arrCopy = new byte[byteRead];
+                    Array.Copy(buffer, 0, arrCopy, 0, byteRead);
+                    dataReceivedBuff = dataReceivedBuff.Concat(arrCopy).ToArray(); // buffer可用长度不准确需要截取
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-
-
-                if (byteRead == 0) return;
-
-                //条件跳过
-                if (isReadImageData) goto readImage;
-                else if (buffer[0] == 0x6D && buffer[1] == 0x78)
-                {
-                    imageData = new byte[] { }.Concat(buffer).ToArray();
-                    isReadImageData = true;
-                    goto readImage;
-                }
-                else if (buffer[3] == 0x19) goto encrypted;
-
-                #region 数据分包传输，长度不对需拼接
-                if (buffer.First() == 0xEF)
+            }
+            else
+            {
+                dataReceivedBuff = dataReceivedBuff.Concat(buffer).ToArray();
+                if (dataReceivedBuff.First() == 0xEF)
                 {
                     int byteSize = BitConverter.ToInt16(new byte[] { buffer[4], buffer[3] }, 0) + 5 + 1;
                     if (buffer.Length != byteSize)
                     {
-                        var arrCopy = new byte[byteRead];
-                        Array.Copy(buffer, 0, arrCopy, 0, byteRead);
-                        dataReceivedBuff = dataReceivedBuff.Concat(arrCopy).ToArray(); // buffer可用长度不准确需要截取
-                        return;
+                        buffer = new byte[] { }.Concat(dataReceivedBuff).ToArray();
+                        dataReceivedBuff = new byte[] { };
                     }
-                }
-                else
-                {
-                    dataReceivedBuff = dataReceivedBuff.Concat(buffer).ToArray();
-                    if (dataReceivedBuff.First() == 0xEF)
-                    {
-                        int byteSize = BitConverter.ToInt16(new byte[] { buffer[4], buffer[3] }, 0) + 5 + 1;
-                        if (buffer.Length != byteSize)
-                        {
-                            buffer = new byte[] { }.Concat(dataReceivedBuff).ToArray();
-                            dataReceivedBuff = new byte[] { };
-                        }
-                        else if (buffer.Length < byteSize)
-                        {
-                            dataReceivedBuff = new byte[] { };
-                            return;
-                        }
-                        else return;
-                    }
-                    else
+                    else if (buffer.Length < byteSize)
                     {
                         dataReceivedBuff = new byte[] { };
                         return;
                     }
+                    else return;
                 }
-            #endregion
-
-            encrypted:
-                stopwatch.Stop();
-                Gl.PrintLogColor(BitConverter.ToString(buffer).Replace('-', ' '), greenBrush, null);
-                Gl.PrintLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
-
-                switch (buffer[2])
+                else
                 {
-                    case 0x00: // MID_REPLY
-                        Gl.PrintLog(UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(buffer[6]));
-                        //只能特定的状态下才能进行解析报文内容
-                        if (buffer[6] == 0 ||
-                            buffer[6] == 10 ||
-                            (buffer[5] == 0x11 && buffer[6] == 1 ||
-                             buffer[5] == 0x11 && buffer[6] == 2 ||
-                             buffer[5] == 0x11 && buffer[6] == 3 ||
-                             buffer[5] == 0x11 && buffer[6] == 4)) { }
-                        else return;
-                        switch (buffer[5])
-                        {
-                            case 0x11: Gl.PrintLog(UtilsHelper.GetEnumDescription<ModuleState, byte>(buffer[6])); heartbeat = buffer[6]; break;
-                            case 0x12:
-                                short id = -1;
-                                string userName, isAdmin;
-                                try
+                    dataReceivedBuff = new byte[] { };
+                    return;
+                }
+            }
+        #endregion
+
+        encrypted:
+            stopwatch.Stop();
+            Gl.PrintLogColor(BitConverter.ToString(buffer).Replace('-', ' '), greenBrush, null);
+            Gl.PrintLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
+
+            switch (buffer[2])
+            {
+                case 0x00: // MID_REPLY
+                    Gl.PrintLog(UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(buffer[6]));
+                    //只能特定的状态下才能进行解析报文内容
+                    if (buffer[6] == 0 ||
+                        buffer[6] == 10 ||
+                        buffer[5] == 0x12 ||
+                        (buffer[5] == 0x11 && buffer[6] == 1 ||
+                         buffer[5] == 0x11 && buffer[6] == 2 ||
+                         buffer[5] == 0x11 && buffer[6] == 3 ||
+                         buffer[5] == 0x11 && buffer[6] == 4)) { }
+                    else return;
+                    switch (buffer[5])
+                    {
+                        case 0x11: Gl.PrintLog(UtilsHelper.GetEnumDescription<ModuleState, byte>(buffer[6])); heartbeat = buffer[6]; break;
+                        case 0x12:
+                            Gl.faseReplyRes = buffer[6];
+                            short id = -1;
+                            string userName, isAdmin;
+                            try
+                            {
+                                if (buffer[6] == 0x00)
                                 {
                                     id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
                                     userName = Encoding.UTF8.GetString(buffer.Skip(9).Take(32).ToArray());
@@ -611,95 +614,94 @@ namespace Face.WPF.ViewModels
                                     Gl.PrintLog("解锁中眼状态：" + unlockStatu);
                                     Gl.faceID = id;
                                 }
-                                catch (Exception ex)
-                                {
-                                    Gl.PrintLogColor(ex.Message, redBrush, null);
-                                }
-                                break;
-                            case 0x13:
-                                id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
-                                Gl.PrintLog("已注册用户ID：" + id);
-                                Gl.PrintLog("人脸朝向：" + UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[9]));
-                                break;
-                            case 0x1D:
-                                id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
-                                Gl.PrintLog("已注册用户ID：" + id);
-                                Gl.PrintLog("人脸朝向：" + UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[9]));
-                                break;
-                            case 0x22:
-                                id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
-                                userName = Encoding.UTF8.GetString(buffer.Skip(9).Take(32).ToArray());
-                                isAdmin = buffer[41] == 0x00 ? "否" : "是";
-                                Gl.PrintLog("已注册用户ID：" + id);
-                                Gl.PrintLog("用户名字：" + userName);
-                                Gl.PrintLog("是否为管理员：" + isAdmin);
-                                break;
-                            case 0x24:
-                                try
-                                {
-                                    int allUserCount = BitConverter.ToInt16(new byte[] { buffer[7], buffer[8] }, 0);
-                                    string userId = string.Empty;
-                                    for (int i = 0; i < allUserCount; i++)
-                                        userId += BitConverter.ToInt16(new byte[] { buffer[9 + 2 * i], buffer[8 + 2 * i] }, 0).ToString() + "  ";
-                                    Gl.PrintLog("已注册用户数量：" + allUserCount);
-                                    Gl.PrintLog($"分别是：[ {userId}]");
-                                }
-                                catch (Exception) { Gl.PrintLog("没有已录入的用户"); }
-                                break;
-                            case 0x26:
-                                if (buffer[4] == 2)
-                                {
-                                    Gl.PrintLog("面部重复录入");
+                                else if (buffer[6] == 0x08)
                                     Gl.faceID = -2;
-                                }
-                                else
-                                {
-                                    id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
-                                    Gl.PrintLog("已注册用户ID：" + id);
-                                    Gl.faceID = id;
-                                }
-                                break;
-                            case 0x30: Gl.PrintLog("版本：" + Encoding.UTF8.GetString(buffer.Skip(6).Take(32).ToArray())); break;
-                            default: break;
-                        }
-                        break;
-                    case 0x01: // MID_NOTE
-                        try
-                        {
-                            Gl.PrintLog(UtilsHelper.GetEnumDescription<MID_NOTE_RES, byte>(buffer[5]));
-                            Gl.PrintLog("人脸状态：" + UtilsHelper.GetEnumDescription<FaceState, short>(BitConverter.ToInt16(new byte[] { buffer[6], buffer[7] }, 0)));
-                            Gl.PrintLog("距图片最左侧距离：" + BitConverter.ToInt16(new byte[] { buffer[8], buffer[9] }, 0));
-                            Gl.PrintLog("距图片最上方距离：" + BitConverter.ToInt16(new byte[] { buffer[10], buffer[11] }, 0));
-                            Gl.PrintLog("距图片最右方距离：" + BitConverter.ToInt16(new byte[] { buffer[12], buffer[13] }, 0));
-                            Gl.PrintLog("距图片最下方距离：" + BitConverter.ToInt16(new byte[] { buffer[14], buffer[15] }, 0));
-                            int yawNum = BitConverter.ToInt16(new byte[] { buffer[16], buffer[17] }, 0);
-                            int pitchNum = BitConverter.ToInt16(new byte[] { buffer[18], buffer[19] }, 0);
-                            int rollNum = BitConverter.ToInt16(new byte[] { buffer[20], buffer[21] }, 0);
-                            string yaw = yawNum < 0 ? "左转头" : yawNum > 0 ? "右转头" : yawNum.ToString();
-                            string pitch = pitchNum < 0 ? "上抬头" : pitchNum > 0 ? "下低头" : pitchNum.ToString();
-                            string roll = rollNum < 0 ? "右歪头" : rollNum > 0 ? "左歪头" : rollNum.ToString();
-                            Gl.PrintLog("yaw：" + yaw);
-                            Gl.PrintLog("pitch：" + pitch);
-                            Gl.PrintLog("roll：" + roll);
-                            stopwatch.Restart();
-                        }
-                        catch (Exception ex) { Gl.PrintLogColor(ex.Message, redBrush, null); }
-                        break;
-                    case 0x02: // MID_IMAGE
-                        break;
-                    default: break;
-                }
-                return;
+                            }
+                            catch (Exception ex) { Gl.PrintLogColor(ex.Message, redBrush, null); }
+                            break;
+                        case 0x13:
+                            id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
+                            Gl.PrintLog("已注册用户ID：" + id);
+                            Gl.PrintLog("人脸朝向：" + UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[9]));
+                            break;
+                        case 0x1D:
+                            id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
+                            Gl.PrintLog("已注册用户ID：" + id);
+                            Gl.PrintLog("人脸朝向：" + UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[9]));
+                            break;
+                        case 0x22:
+                            id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
+                            userName = Encoding.UTF8.GetString(buffer.Skip(9).Take(32).ToArray());
+                            isAdmin = buffer[41] == 0x00 ? "否" : "是";
+                            Gl.PrintLog("已注册用户ID：" + id);
+                            Gl.PrintLog("用户名字：" + userName);
+                            Gl.PrintLog("是否为管理员：" + isAdmin);
+                            break;
+                        case 0x24:
+                            try
+                            {
+                                int allUserCount = BitConverter.ToInt16(new byte[] { buffer[7], buffer[8] }, 0);
+                                string userId = string.Empty;
+                                for (int i = 0; i < allUserCount; i++)
+                                    userId += BitConverter.ToInt16(new byte[] { buffer[9 + 2 * i], buffer[8 + 2 * i] }, 0).ToString() + "  ";
+                                Gl.PrintLog("已注册用户数量：" + allUserCount);
+                                Gl.PrintLog($"分别是：[ {userId}]");
+                            }
+                            catch (Exception) { Gl.PrintLog("没有已录入的用户"); }
+                            break;
+                        case 0x26:
+                            if (buffer[4] == 2)
+                            {
+                                Gl.faseReplyRes = buffer[6];
+                                Gl.PrintLog(UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[6]));
+                            }
+                            else
+                            {
+                                id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
+                                Gl.PrintLog("已注册用户ID：" + id);
+                                Gl.faceID = id;
+                            }
+                            break;
+                        case 0x30: Gl.PrintLog("版本：" + Encoding.UTF8.GetString(buffer.Skip(6).Take(32).ToArray())); break;
+                        default: break;
+                    }
+                    break;
+                case 0x01: // MID_NOTE
+                    try
+                    {
+                        Gl.PrintLog(UtilsHelper.GetEnumDescription<MID_NOTE_RES, byte>(buffer[5]));
+                        Gl.PrintLog("人脸状态：" + UtilsHelper.GetEnumDescription<FaceState, short>(BitConverter.ToInt16(new byte[] { buffer[6], buffer[7] }, 0)));
+                        Gl.PrintLog("距图片最左侧距离：" + BitConverter.ToInt16(new byte[] { buffer[8], buffer[9] }, 0));
+                        Gl.PrintLog("距图片最上方距离：" + BitConverter.ToInt16(new byte[] { buffer[10], buffer[11] }, 0));
+                        Gl.PrintLog("距图片最右方距离：" + BitConverter.ToInt16(new byte[] { buffer[12], buffer[13] }, 0));
+                        Gl.PrintLog("距图片最下方距离：" + BitConverter.ToInt16(new byte[] { buffer[14], buffer[15] }, 0));
+                        int yawNum = BitConverter.ToInt16(new byte[] { buffer[16], buffer[17] }, 0);
+                        int pitchNum = BitConverter.ToInt16(new byte[] { buffer[18], buffer[19] }, 0);
+                        int rollNum = BitConverter.ToInt16(new byte[] { buffer[20], buffer[21] }, 0);
+                        string yaw = yawNum < 0 ? "左转头" : yawNum > 0 ? "右转头" : yawNum.ToString();
+                        string pitch = pitchNum < 0 ? "上抬头" : pitchNum > 0 ? "下低头" : pitchNum.ToString();
+                        string roll = rollNum < 0 ? "右歪头" : rollNum > 0 ? "左歪头" : rollNum.ToString();
+                        Gl.PrintLog("yaw：" + yaw);
+                        Gl.PrintLog("pitch：" + pitch);
+                        Gl.PrintLog("roll：" + roll);
+                        stopwatch.Restart();
+                    }
+                    catch (Exception ex) { Gl.PrintLogColor(ex.Message, redBrush, null); }
+                    break;
+                case 0x02: // MID_IMAGE
+                    break;
+                default: break;
+            }
+            return;
 
-            readImage:
-                imageData = imageData.Concat(buffer).ToArray();
-                if (imageData.Length >= 78320)
-                {
-                    isReadImageData = false;
-                    Gl.PrintLogColor(BitConverter.ToString(imageData).Replace('-', ' '), greenBrush, null);
-                    Gl.PrintLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
-                }
-            });
+        readImage:
+            imageData = imageData.Concat(buffer).ToArray();
+            if (imageData.Length >= 78320)
+            {
+                isReadImageData = false;
+                Gl.PrintLogColor(BitConverter.ToString(imageData).Replace('-', ' '), greenBrush, null);
+                Gl.PrintLog("耗时(ms)：" + stopwatch.ElapsedMilliseconds);
+            }
         }
 
         private void WindowCenter()

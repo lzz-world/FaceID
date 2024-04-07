@@ -19,6 +19,7 @@ using System.Threading;
 using Face.WPF.Views;
 using System.Timers;
 using System.Windows.Forms;
+using static Face.WPF.Models.FaceModel;
 
 namespace Face.WPF.ViewModels
 {
@@ -65,16 +66,15 @@ namespace Face.WPF.ViewModels
                                 {
                                     IsLoading = false;
                                     bool res = false;
-                                    _ = System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)( async () =>
+                                    _ = System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)(async () =>
                                     {
                                         res = await Login(new HandyControl.Controls.PasswordBox());
                                     }));
                                     return;
                                 }
-
-                                if (DateTime.Now.Ticks - tick > Gl.scanFaceTimeOut * 1_100_0000)
+                                else if (Gl.faceID < -1 || DateTime.Now.Ticks - tick > Gl.scanFaceTimeOut * 1_100_0000)
                                 {
-                                    ErrorTips = "面部未录入或超时";
+                                    ErrorTips = UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(Gl.faseReplyRes);
                                     IsLoading = false;
                                     await Task.Delay(3000);
                                     break;

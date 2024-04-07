@@ -53,7 +53,7 @@
                                                   IsChecked="{Binding ElementName=DrawerLeftInContainer, Path=IsOpen}"
                                                   Style="{StaticResource ToggleBtnBaseStyle}"
                                                   Width="60" />
-                                    <Button Margin="0,0,10,0" Command="{Binding UserSelectedCommand}" CommandParameter="All"  Content="全选" Style="{StaticResource ButtonBaseStyle}" />
+                                    <Button Margin="0,0,10,0" Command="{Binding UserSelectedCommand}" CommandParameter="All" Content="全选" Style="{StaticResource ButtonBaseStyle}" />
                                     <Button Margin="0,0,10,0" Command="{Binding UserSelectedCommand}" CommandParameter="Invert" Content="反选" Style="{StaticResource ButtonBaseStyle}" />
                                     <Button Margin="0,0,10,0" Command="{Binding UserDelectedCommand}" Content="删除" Style="{StaticResource ButtonBaseStyle}" />
                                 </StackPanel>
@@ -102,7 +102,7 @@
                                 </Grid>
                             </Grid>
                             <hc:Drawer Name="DrawerLeftInContainer" Dock="Left" Height="665" ShowMode="Push">
-                                <Border Background="{StaticResource BackgroupOne}" BorderBrush="{DynamicResource BorderBrush}" CornerRadius="4" Width="320">
+                                <Border Background="{StaticResource BackgroupOne}" BorderBrush="{StaticResource BorderBrush}" CornerRadius="4" Width="320">
                                     <TabControl Margin="0,5,0,0" Background="Transparent" BorderBrush="Transparent" SelectedIndex="{Binding UserRegisterTabIndex}" Style="{StaticResource TabControlStyle}">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="SelectionChanged">
@@ -286,8 +286,18 @@
                                                     <ComboBoxItem>维护员</ComboBoxItem>
                                                     <ComboBoxItem>访客</ComboBoxItem>
                                                 </ComboBox>
-                                                <PasswordBox Margin="0,2,0,0" dps:PasswordBoxHelper.Attach="True" dps:PasswordBoxHelper.Password="{Binding Pw, ValidatesOnDataErrors=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="6" />
-                                                <PasswordBox Margin="0,2,0,0" dps:PasswordBoxHelper.Attach="True" dps:PasswordBoxHelper.Password="{Binding RePw, ValidatesOnDataErrors=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="7" />
+                                                <PasswordBox Margin="0,2,0,0"
+                                                             dps:PasswordBoxHelper.Attach="True"
+                                                             dps:PasswordBoxHelper.Password="{Binding Pw, ValidatesOnDataErrors=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                             Grid.Column="1"
+                                                             Grid.Row="6"
+                                                             ToolTip="{Binding Pw}" />
+                                                <PasswordBox Margin="0,2,0,0"
+                                                             dps:PasswordBoxHelper.Attach="True"
+                                                             dps:PasswordBoxHelper.Password="{Binding RePw, ValidatesOnDataErrors=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                             Grid.Column="1"
+                                                             Grid.Row="7"
+                                                             ToolTip="{Binding RePw}" />
                                                 <Button HorizontalAlignment="Stretch"
                                                         Command="{Binding UserRegisterCommand}"
                                                         Content="{Binding AddText, StringFormat={}}"

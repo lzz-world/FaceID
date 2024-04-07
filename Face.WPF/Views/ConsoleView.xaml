@@ -8,7 +8,8 @@
                  IsReadOnly="True"
                  VerticalScrollBarVisibility="Auto"
                  Width="600">
-        <FlowDocument x:Name="FlowDocument" />
+        <FlowDocument x:Name="FlowDocument">
+        </FlowDocument>
     </RichTextBox>
 </UserControl>
 

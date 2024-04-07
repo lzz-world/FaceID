@@ -21,14 +21,17 @@ using MessageBox = HandyControl.Controls.MessageBox;
 using HandyControl.Tools.Extension;
 using static Face.WPF.ViewModels.UserViewModel;
 using System.Security.Policy;
+using static Face.WPF.Models.FaceModel;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Face.WPF.ViewModels
 {
     public partial class UserViewModel : ObservableValidator
     {
+        private const string ADD_USER = "注册";
+        private const string USER_UPDATA = "更新";
         private string userName;
         private string account;
-        private string department;
         private string position;
         private string pw;
         private string rePw;
@@ -45,7 +48,7 @@ namespace Face.WPF.ViewModels
         [ObservableProperty] private int? faseID;
         [ObservableProperty] private bool isRegisterSuccess = false;
         [ObservableProperty] private bool isRegisterProcess = false;
-        [ObservableProperty] private string addText = "注册";
+        [ObservableProperty] private string addText = ADD_USER;
 
         [Required(ErrorMessage = "请输入名字")]
         [MinLength(2, ErrorMessage = "最少2位")]
@@ -109,7 +112,7 @@ namespace Face.WPF.ViewModels
         [RelayCommand]
         private void UserRegister()
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 #region 验证逻辑
                 ErrorTips = string.Empty;
@@ -118,12 +121,18 @@ namespace Face.WPF.ViewModels
                 string errorMessage = UtilsHelper.ValidateProperty(this, "UserName");
                 if (errorMessage != null)
                 {
-                    ErrorTips = "姓名：" + errorMessage;
-                    return;
+                    ErrorTips = "姓名：" + errorMessage;return;
                 }
 
                 List<MyUserModel> filterInfo = Users.Where(w => w.UserModel.Name == UserName).ToList();
-                if (filterInfo.Count > 0) { ErrorTips = "名字已注册"; return; }
+                if (filterInfo.Count > 0 && AddText == ADD_USER)
+                {
+                    ErrorTips = "名字已注册"; return;
+                }
+                else if (filterInfo.Count > 0 && filterInfo.First().UserModel.Id != oldUserModel.Id && AddText == USER_UPDATA)
+                {
+                    ErrorTips = "名字已注册"; return;
+                }
 
                 if (UserRegisterTabIndex == 1)
                 {
@@ -134,8 +143,11 @@ namespace Face.WPF.ViewModels
                     errorMessage = UtilsHelper.ValidateProperty(this, "RePw");
                     if (errorMessage != null) { ErrorTips = "确认密码：" + errorMessage; return; }
                     if (RePw != Pw) { ErrorTips = "密码不一致"; return; }
+
                     filterInfo = Users.Where(w => w.UserModel.Account == Account).ToList();
-                    if (filterInfo.Count > 0) { ErrorTips = "工号已注册"; return; }
+                    if (filterInfo.Count > 0 && AddText == ADD_USER) { ErrorTips = "工号已注册"; return; }
+                    else if (filterInfo.Count > 0 && filterInfo.First().UserModel.Id != oldUserModel.Id && AddText == USER_UPDATA)
+                    { ErrorTips = "工号已注册"; return; }
                 }
                 else if (UserRegisterTabIndex == 0)
                 {
@@ -144,7 +156,9 @@ namespace Face.WPF.ViewModels
                         errorMessage = UtilsHelper.ValidateProperty(this, "Account");
                         if (errorMessage != null) { ErrorTips = "工号：" + errorMessage; return; }
                         filterInfo = Users.Where(w => w.UserModel.Account == Account).ToList();
-                        if (filterInfo.Count > 0) { ErrorTips = "工号已注册"; return; }
+                        if (filterInfo.Count > 0 && AddText == ADD_USER) { ErrorTips = "工号已注册"; return; }
+                        else if (filterInfo.Count > 0 && filterInfo.First().UserModel.Id != oldUserModel.Id && AddText == USER_UPDATA)
+                        { ErrorTips = "工号已注册"; return; }
                     }
                 }
 
@@ -153,16 +167,15 @@ namespace Face.WPF.ViewModels
                 IsRegisterProcess = true;
                 Task<bool> res = AddText switch
                 {
-                    "注册" => AddUserAsync(),
-                    "更新" => UpdataUserAsync(oldUserModel),
+                    ADD_USER => AddUserAsync(),
+                    USER_UPDATA => UpdataUserAsync(oldUserModel),
                     _ => Task.FromResult(false)
                 };
 
+                await res;
                 IsRegisterProcess = false;
                 if (res.Result)
                     IsRegisterSuccess = true;
-                else
-                    ErrorTips = "注册异常";
             });
         }
 
@@ -195,22 +208,22 @@ namespace Face.WPF.ViewModels
                     Gl.SerialWrite(13);
                     while (!cts.IsCancellationRequested)
                     {
-                        if (Gl.faceID > -1 || Gl.faceID < -1)
+                        if (Gl.faceID > -1)
                             return true;
                         await Task.Delay(100);
                     }
                     return false;
                 });
-                if (!fTask.Result) return false;
                 if (await Task.WhenAny(fTask, Task.Delay(Gl.scanFaceTimeOut * 1000)) != fTask)
                 {
                     cts.Cancel();
                     ErrorTips = "面部扫描超时";
                     return false;
                 }
-                if (Gl.faceID == -2)
+                if (!fTask.Result) return false;
+                if (Gl.faseReplyRes != 0x00)
                 {
-                    ErrorTips = "面部重复录入";
+                    ErrorTips = UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(Gl.faseReplyRes);
                     return false;
                 }
 
@@ -242,17 +255,146 @@ namespace Face.WPF.ViewModels
             return true;
         }
 
-        private Task<bool> UpdataUserAsync(UserModel oldUserModel)
+        private async Task<bool> UpdataUserAsync(UserModel oldUserModel)
         {
+            string AccountEncrypMD5 = oldUserModel.Account ?? string.Empty;
+            string PwEncrypMD5 = oldUserModel.Pssword ?? string.Empty;
+
+            UserType auth = AuthIndex == 0 ? UserType.Admin :
+                            AuthIndex == 1 ? UserType.Operator :
+                            AuthIndex == 2 ? UserType.Maintain : UserType.Visitor;
+            DepartmentType department = DepartmentIndex == 0 ? DepartmentType.ProduceOne :
+                                        DepartmentIndex == 1 ? DepartmentType.ProduceTwo : DepartmentType.ProduceThree;
+            GenderType gender = GenderIndex == 0 ? GenderType.Men : GenderType.Women;
+
             if (UserRegisterTabIndex == 1)
             {
-
-            }
+                AccountEncrypMD5 = HashEncrypMD5.Md5Encrypt_Key(Account, HashEncrypMD5.Key);
+                PwEncrypMD5 = HashEncrypMD5.Md5Encrypt_Key(Pw, HashEncrypMD5.Key);            }
             else
             {
+                /*
+                 1.先判断面部是否录入，如果没有录入过则立即更新
+                 2.如果已录入再判断是不是当前的面部ID对应的人像
+                 3.如果对应则更新，反之不更新
+                 */
+                cts = new CancellationTokenSource();
+                // 人脸识别
+                Task<bool> fTask = Task.Run(async () =>
+                {
+                    if (Gl.faseState == 0) { ErrorTips = "请检查串口连接"; return false; }
+                    Gl.SerialWrite(2);
+                    while (!cts.IsCancellationRequested)
+                    {
+                        if (Gl.faceID > -1 || Gl.faceID < -1)
+                            return true;
+                        await Task.Delay(100);
+                    }
+                    return false;
+                });
+                if (await Task.WhenAny(fTask, Task.Delay(Gl.scanFaceTimeOut * 1000)) != fTask)
+                {
+                    cts.Cancel();
+                    ErrorTips = "面部扫描超时";
+                    return false;
+                }
+                if (!fTask.Result) return false;
+                if (Gl.faceID == -1)
+                {
+                    ErrorTips = UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(Gl.faseReplyRes);
+                    return false;
+                }
+                else if (Gl.faceID == -2)
+                {
 
+                }
+                else if (Gl.faceID != oldUserModel.FaseId)
+                {
+                    var us = Users.Where(w => w.UserModel.FaseId == Gl.faceID).FirstOrDefault();
+                    ErrorTips = $"你已录入为其他角色[{us.UserModel.Name}]";
+                    return false;
+                }
+
+                // 人脸更新
+                fTask = Task.Run(async () =>
+                {
+                    if (Gl.faseState == 0) { ErrorTips = "请检查串口连接"; return false; }
+                    if (oldUserModel.FaseId != null)
+                    {
+                        Gl.faceUserID = (int)oldUserModel!.FaseId;
+                        Gl.SerialWrite(8);
+                    }
+                    Gl.SerialWrite(13);
+                    while (!cts.IsCancellationRequested)
+                    {
+                        if (Gl.faceID > -1)
+                            return true;
+                        await Task.Delay(100);
+                    }
+                    return false;
+                });
+                if (await Task.WhenAny(fTask, Task.Delay(Gl.scanFaceTimeOut * 1000)) != fTask)
+                {
+                    cts.Cancel();
+                    ErrorTips = "面部扫描超时";
+                    return false;
+                }
+                if (!fTask.Result) return false;
+                if (Gl.faceID == -1)
+                {
+                    ErrorTips = UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(Gl.faseReplyRes);
+                    return false;
+                }
+
+                AccountEncrypMD5 = HashEncrypMD5.Md5Encrypt_Key(Account, HashEncrypMD5.Key);
+                FaseID = Gl.faceID;
             }
-            return Task.FromResult(true);
+
+            var upRow = DB.Fsql.Update<UserModel>()
+                .Set(s => s.Account, HashEncrypMD5.Md5Encrypt_Key(Account, HashEncrypMD5.Key))
+                .Set(s => s.Auth, auth)
+                .Set(s => s.FaseId, (byte?)FaseID)
+                .Set(s => s.Department, department)
+                .Set(s => s.Gender, gender)
+                .Set(s => s.Name, UserName)
+                .Set(s => s.Position, Position)
+                .Set(s => s.Pssword, HashEncrypMD5.Md5Encrypt_Key(Pw, HashEncrypMD5.Key))
+                .Where(w => w.Name == oldUserModel.Name)
+                .ExecuteAffrows();
+            if (upRow != 1)
+            {
+                ErrorTips = "数据库更新0";
+                return false;
+            }
+
+            var listIndex = Users.IndexOf(Users.Where(w => w.UserModel == oldUserModel).First());
+            MyUserModel myUserModel = new MyUserModel()
+            {
+                IsCheck = false,
+                UserModel = new UserModel()
+                {
+                    FaseId = (byte?)FaseID,
+                    Account = Account,
+                    Auth = auth,
+                    Department = department,
+                    Gender = gender,
+                    Name = UserName,
+                    Position = Position,
+                    Pssword = HashEncrypMD5.Md5Encrypt_Key(Pw, HashEncrypMD5.Key),
+                    Id = oldUserModel.Id,
+                    CreateTime = oldUserModel.CreateTime,
+                    Image = oldUserModel?.Image,
+                    UpdateTime = oldUserModel.UpdateTime
+                }
+            };
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Users.RemoveAt(listIndex);
+                Users.Insert(listIndex, myUserModel);
+            });
+            this.oldUserModel = myUserModel.UserModel;
+            return true;
         }
 
         [RelayCommand]
@@ -307,7 +449,13 @@ namespace Face.WPF.ViewModels
             }
         }
 
-        [RelayCommand] private void RegisterTabSelectionChanged() { ErrorTips = string.Empty; IsRegisterSuccess = false; }
+        [RelayCommand]
+        private void RegisterTabSelectionChanged()
+        { 
+            ErrorTips = string.Empty; 
+            cts?.Cancel(); 
+            IsRegisterSuccess = false; 
+        }
 
         [RelayCommand]
         private void UserAddTab()
@@ -334,11 +482,13 @@ namespace Face.WPF.ViewModels
         {
             oldUserModel = userModel;
             UserRegisterTabIndex = 1;
+            ErrorTips = string.Empty;
+            IsRegisterSuccess = false;
             AddText = "更新";
 
             Account = userModel.Account ?? string.Empty;
             string[] auth = Enum.GetNames(typeof(UserType));
-            AuthIndex = Array.IndexOf(auth, userModel.Auth.ToString());
+            AuthIndex = Array.IndexOf(auth, userModel.Auth.ToString()) - 1;
             string[] department = Enum.GetNames(typeof(DepartmentType));
             DepartmentIndex = Array.IndexOf(department, userModel.Department.ToString());
             string[] gender = Enum.GetNames(typeof(GenderType));
@@ -346,8 +496,8 @@ namespace Face.WPF.ViewModels
             FaseID = userModel.FaseId;
             UserName = userModel.Name;
             Position = userModel.Position ?? string.Empty;
-            Pw = userModel.Pssword ?? string.Empty;
-            RePw = userModel.Pssword ?? string.Empty;
+            Pw = userModel.Pssword != null ? HashEncrypMD5.Md5Decrypt(userModel.Pssword, HashEncrypMD5.Key) : string.Empty;
+            RePw = this.Pw;
         }
 
         public partial class MyUserModel : ObservableObject
