@@ -37,9 +37,13 @@ namespace Face.WPF.Views
         {
             TabControl tabControl = sender as TabControl;
             if (tabControl.SelectedIndex == 0)
+            {
                 _mainWindow.ScrView.Visibility = Visibility.Visible;
+            }
             else
+            {
                 _mainWindow.ScrView.Visibility = Visibility.Hidden;
+            }
         }
     }
 }

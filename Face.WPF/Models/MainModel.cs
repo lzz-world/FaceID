@@ -15,7 +15,7 @@ namespace Face.WPF.Models
 {
     public class MainModel
     {
-        public static int imageRotateFlipIndex = 1;
+        public static int imageRotateFlipIndex = 5;
         public static byte[]? imageBytes;
 
         //官方枚举有重复

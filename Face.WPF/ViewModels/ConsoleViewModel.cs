@@ -101,5 +101,7 @@ namespace Face.WPF.ViewModels
                 }
             });
         }
+
+        [RelayCommand] void FlowDocClear() => ConsoleView.FlowDocument.Blocks.Clear();
     }
 }

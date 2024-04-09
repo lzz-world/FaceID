@@ -581,13 +581,20 @@
                                                 <Image />
                                             </TabItem>
                                         </TabControl>
-                                        <Button Margin="5"
-                                                VerticalAlignment="Bottom"
-                                                Command="{Binding SerialSendCommand}"
-                                                Content="发 送"
-                                                DockPanel.Dock="Bottom"
-                                                Style="{StaticResource ButtonBaseStyle}"
-                                                Width="100" />
+                                        <StackPanel Margin="0 0 0 10" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
+                                            <Button Margin="0 0 10 0"
+                                                    Command="{Binding SerialSendCommand}"
+                                                    Content="发 送"
+                                                    DockPanel.Dock="Bottom"
+                                                    Style="{StaticResource ButtonBaseStyle}"
+                                                    Width="100" />
+                                            <ToggleButton x:Name="VeidoToggBtn" Style="{StaticResource ToggleBtnBaseStyle}">
+                                                <iconPacks:BootstrapIcons Kind="CameraVideo" />
+                                            </ToggleButton>
+                                            <Popup Focusable="True" IsOpen="{Binding IsChecked, ElementName=VeidoToggBtn, Mode=OneWay}" PlacementTarget="{Binding ElementName=VeidoToggBtn}">
+                                                <!--<view:VedioView/>-->
+                                            </Popup>
+                                        </StackPanel>
                                     </DockPanel>
                                 </Border>
                             </StackPanel>

@@ -21,6 +21,7 @@ namespace Face.WPF.Utils
         public static int scanFaceTimeOut = 10;
         public static byte faseReplyRes = 0x00;
         public static int faseState = 0;
+        public static int[] fasePos = new int[8];
         public static bool isCapture = false;
 
         public static Action closeVideo;

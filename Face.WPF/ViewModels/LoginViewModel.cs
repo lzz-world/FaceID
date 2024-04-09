@@ -65,6 +65,7 @@ namespace Face.WPF.ViewModels
                                 Debug.WriteLine($"ScanID：{Gl.faceID}");
                                 if (Gl.faceID > -1)
                                 {
+
                                     //PS:不知为何有几率faceID在登录时为-1
                                     IsLoading = false;
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
@@ -73,6 +74,7 @@ namespace Face.WPF.ViewModels
                                     });
                                     return;
                                 }
+
                                 else if (Gl.faceID < -1 || DateTime.Now.Ticks - tick > Gl.scanFaceTimeOut * 1_100_0000)
                                 {
                                     if (Gl.faseReplyRes == 0x00)

@@ -321,7 +321,7 @@ namespace Face.WPF.ViewModels
             {
                 SerialWrite(1);
                 long ticks = DateTime.Now.Ticks;
-                while (DateTime.Now.Ticks - ticks < 5_000_0000)
+                while (DateTime.Now.Ticks - ticks < 5_000_0000 && IsHeartbeat)
                 {
                     switch (heartbeat)
                     {
@@ -335,8 +335,11 @@ namespace Face.WPF.ViewModels
 
                     Thread.Sleep(100);
                 }
-                Gl.faseState = 0;
-                RunningText = "串口心跳响应超时";
+                if (IsHeartbeat)
+                {
+                    Gl.faseState = 0;
+                    RunningText = "串口心跳响应超时";
+                }
             }
             else
             {
@@ -611,7 +614,7 @@ namespace Face.WPF.ViewModels
                                     Gl.PrintLog("已注册用户ID：" + id);
                                     Gl.PrintLog("用户名字：" + userName);
                                     Gl.PrintLog("是否为管理员：" + isAdmin);
-                                    Gl.PrintLog("解锁中眼状态：" + unlockStatu);
+                                    Gl.PrintLog("解锁中眼状态(有问题)：" + unlockStatu);
                                     Gl.faceID = id;
                                 }
                                 else if (buffer[6] == 0x08)
@@ -672,14 +675,27 @@ namespace Face.WPF.ViewModels
                     try
                     {
                         Gl.PrintLog(UtilsHelper.GetEnumDescription<MID_NOTE_RES, byte>(buffer[5]));
-                        Gl.PrintLog("人脸状态：" + UtilsHelper.GetEnumDescription<FaceState, short>(BitConverter.ToInt16(new byte[] { buffer[6], buffer[7] }, 0)));
-                        Gl.PrintLog("距图片最左侧距离：" + BitConverter.ToInt16(new byte[] { buffer[8], buffer[9] }, 0));
-                        Gl.PrintLog("距图片最上方距离：" + BitConverter.ToInt16(new byte[] { buffer[10], buffer[11] }, 0));
-                        Gl.PrintLog("距图片最右方距离：" + BitConverter.ToInt16(new byte[] { buffer[12], buffer[13] }, 0));
-                        Gl.PrintLog("距图片最下方距离：" + BitConverter.ToInt16(new byte[] { buffer[14], buffer[15] }, 0));
-                        int yawNum = BitConverter.ToInt16(new byte[] { buffer[16], buffer[17] }, 0);
-                        int pitchNum = BitConverter.ToInt16(new byte[] { buffer[18], buffer[19] }, 0);
-                        int rollNum = BitConverter.ToInt16(new byte[] { buffer[20], buffer[21] }, 0);
+
+                        int[] stateBytes = new int[]
+                        {
+                            BitConverter.ToInt16(new byte[] { buffer[6], buffer[7] }, 0),  // 人脸状态
+                            BitConverter.ToInt16(new byte[] { buffer[8], buffer[9] }, 0),  // 距图片最左侧距离
+                            BitConverter.ToInt16(new byte[] { buffer[10], buffer[11] }, 0),// 距图片最上方距离
+                            BitConverter.ToInt16(new byte[] { buffer[12], buffer[13] }, 0),// 距图片最右方距离
+                            BitConverter.ToInt16(new byte[] { buffer[14], buffer[15] }, 0),// 距图片最下方距离
+                            BitConverter.ToInt16(new byte[] { buffer[16], buffer[17] }, 0),// yaw
+                            BitConverter.ToInt16(new byte[] { buffer[18], buffer[19] }, 0),// pitch
+                            BitConverter.ToInt16(new byte[] { buffer[20], buffer[21] }, 0) // roll
+                        };
+                        Gl.fasePos = stateBytes;
+                        Gl.PrintLog("人脸状态：" + UtilsHelper.GetEnumDescription<FaceState, int>(stateBytes[0]));
+                        Gl.PrintLog("距图片最左侧距离：" + stateBytes[1]);
+                        Gl.PrintLog("距图片最上方距离：" + stateBytes[2]);
+                        Gl.PrintLog("距图片最右方距离：" + stateBytes[3]);
+                        Gl.PrintLog("距图片最下方距离：" + stateBytes[4]);
+                        int yawNum = stateBytes[5];
+                        int pitchNum = stateBytes[6];
+                        int rollNum = stateBytes[7];
                         string yaw = yawNum < 0 ? "左转头" : yawNum > 0 ? "右转头" : yawNum.ToString();
                         string pitch = pitchNum < 0 ? "上抬头" : pitchNum > 0 ? "下低头" : pitchNum.ToString();
                         string roll = rollNum < 0 ? "右歪头" : rollNum > 0 ? "左歪头" : rollNum.ToString();

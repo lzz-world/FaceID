@@ -19,6 +19,7 @@
         <cons:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <conv:DataGridHeaderConverter x:Key="DataGridHeaderConverter" />
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <conv:BytesToImageConverter x:Key="BytesToImageConverter" />
 
         <Style BasedOn="{StaticResource TabItemExWithUnderLineStyle}" TargetType="TabItem">
             <Setter Property="FontWeight" Value="Medium" />
@@ -90,10 +91,18 @@
                                                 </DataGridTemplateColumn.Header>
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <Button Background="Transparent" BorderBrush="Transparent" 
-                                                                Command="{Binding Path=DataContext.(vm:UserViewModel.ImageShowCommand), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" 
+                                                        <Button Background="Transparent"
+                                                                BorderBrush="Transparent"
+                                                                Command="{Binding Path=DataContext.(vm:UserViewModel.ImageShowCommand), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
                                                                 CommandParameter="{Binding UserModel.Image}"
+                                                                ToolTipService.InitialShowDelay="0"
+                                                                ToolTipService.Placement="Right"
                                                                 Visibility="{Binding UserModel.Image, Converter={StaticResource NullToVisibilityConverter}}">
+                                                            <Button.ToolTip>
+                                                                <ToolTip>
+                                                                    <Image Source="{Binding UserModel.Image, Converter={StaticResource BytesToImageConverter}}" />
+                                                                </ToolTip>
+                                                            </Button.ToolTip>
                                                             <mah:BootstrapIcons Kind="Image" />
                                                         </Button>
                                                     </DataTemplate>
@@ -128,7 +137,7 @@
                                         <TabItem Header="{Binding AddText, Converter={StaticResource DataGridHeaderConverter}, ConverterParameter=Face}" Style="{StaticResource TabItemExWithUnderLineStyle}">
                                             <StackPanel>
                                                 <Grid Margin="0,0,0,3">
-                                                    <view:VedioView Visibility="Visible" />
+                                                    <view:VedioView />
                                                 </Grid>
                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="False">
                                                     <Grid.ColumnDefinitions>
