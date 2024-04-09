@@ -76,4 +76,8 @@
     </Resource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\DialogViewModel\" />
+  </ItemGroup>
+
 </Project>

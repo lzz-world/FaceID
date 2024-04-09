@@ -13,9 +13,10 @@ using System.Windows.Media.Imaging;
 
 namespace Face.WPF.Models
 {
-    internal class MainModel
+    public class MainModel
     {
         public static int imageRotateFlipIndex = 1;
+        public static byte[]? imageBytes;
 
         //官方枚举有重复
         private static RotateFlipType[] rotateFlipTypes = Enum.GetValues(typeof(RotateFlipType))
@@ -24,31 +25,21 @@ namespace Face.WPF.Models
                                             .OrderBy(x => x)
                                             .ToArray();
 
-        public static BitmapImage ConvertToBitmapImage(Bitmap bitmap)
-        {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, ImageFormat.Bmp);
-                memory.Position = 0;
-
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = memory;
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.EndInit();
-
-                return bitmapImage;
-            }
-        }
-
         public static void NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
             VideoCaptureDevice? device = sender as VideoCaptureDevice;
             Bitmap bitmap = (Bitmap)eventArgs.Frame.Clone();
             bitmap.RotateFlip(rotateFlipTypes[imageRotateFlipIndex]);
-            //BitmapImage bitmapImage = ConvertToBitmapImage(bitmap);
-
-            Gl.showImage?.Invoke(bitmap);
+            if (Gl.isCapture)
+            {
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    bitmap.Save(memoryStream, ImageFormat.Png);
+                    imageBytes = memoryStream.ToArray();
+                }
+                Gl.isCapture = false;
+            }
+            Gl.showImage?.Invoke(bitmap);  
         }
     }
 }

@@ -1,0 +1,28 @@
+﻿<Window x:Class="Face.WPF.Views.DialogView.ImageDialogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:Face.WPF.Views.DialogView"
+        Title="ImageDialogView"
+        Background="Transparent"
+        Height="480"
+        Width="320"
+        WindowStyle="None">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="30" CornerRadius="20" GlassFrameThickness="0" NonClientFrameEdges="None" ResizeBorderThickness="5" />
+    </WindowChrome.WindowChrome>
+    <Border Background="Transparent">
+        <Grid>
+            <Image x:Name="image" />
+            <Button x:Name="BtnClose"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Foreground="White"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
+                <iconPacks:BootstrapIcons Kind="x" />
+            </Button>
+        </Grid>
+    </Border>
+</Window>

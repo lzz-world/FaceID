@@ -4,7 +4,6 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.exe.
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Assets\DataGridDictionary.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Assets\TabControlDictionary.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\ConsoleView.g.cs
-F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\DialogView\TipsWindow.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\LoginView.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\MainWindow.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\UserView.g.cs
@@ -15,7 +14,6 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF_Mark
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF_MarkupCompile.lref
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\App.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\ConsoleView.baml
-F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\DialogView\TipsWindow.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\LoginView.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\MainWindow.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\VedioView.baml
@@ -85,3 +83,5 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.Asse
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.AssemblyInfo.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.csproj.CoreCompileInputs.cache
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.csproj.CopyComplete
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\DialogView\ImageDialogView.g.cs
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Views\DialogView\ImageDialogView.baml

@@ -169,7 +169,6 @@ namespace Face.WPF.ViewModels
                     tabIndex = 0;
                     MainWindow.Height = 755;
                     MainWindow.ScrView.Visibility = Visibility.Visible;
-                    MainWindow.SetBtn.Visibility = Visibility.Hidden;
                     break;
                 case UserType.Admin: tabIndex = 1; break;
                 case UserType.Operator: tabIndex = 2; break;
@@ -177,10 +176,11 @@ namespace Face.WPF.ViewModels
                 case UserType.Visitor: tabIndex = 4; break;
                 default: break;
             }
+            MainWindow.SetBtn.Visibility = Visibility.Hidden;
             UserImageIndex = tabIndex + 1;
             ContentControl = new UserView(tabIndex, MainWindow);
-            WindowCenter();
             MIDisEnabled = true;
+            WindowCenter();
         }
 
         [RelayCommand] private void LoginOutCheck() => IsLogOutCheck = !IsLogOutCheck;
@@ -598,7 +598,7 @@ namespace Face.WPF.ViewModels
                         case 0x11: Gl.PrintLog(UtilsHelper.GetEnumDescription<ModuleState, byte>(buffer[6])); heartbeat = buffer[6]; break;
                         case 0x12:
                             Gl.faseReplyRes = buffer[6];
-                            short id = -1;
+                            short id;
                             string userName, isAdmin;
                             try
                             {
@@ -654,9 +654,11 @@ namespace Face.WPF.ViewModels
                             {
                                 Gl.faseReplyRes = buffer[6];
                                 Gl.PrintLog(UtilsHelper.GetEnumDescription<FaceDir, byte>(buffer[6]));
+                                Gl.faceID = -2;
                             }
                             else
                             {
+                                Gl.isCapture = true;
                                 id = BitConverter.ToInt16(new byte[] { buffer[8], buffer[7] }, 0);
                                 Gl.PrintLog("已注册用户ID：" + id);
                                 Gl.faceID = id;

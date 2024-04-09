@@ -14,7 +14,7 @@
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="boolToVi" />
     </UserControl.Resources>
-    <Grid Width="320">
+    <Grid Width="330">
         <Grid.RowDefinitions>
             <RowDefinition Height="70" />
             <RowDefinition />
@@ -23,7 +23,7 @@
         <TabControl Background="Transparent" BorderBrush="Transparent" Grid.Row="1" SelectedIndex="{Binding LoginTabIndex}" Style="{StaticResource TabControlStyle}">
             <TabItem Header="人脸识别登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
                 <StackPanel>
-                    <view:VedioView Margin="0,5,0,5" />
+                    <view:VedioView Margin="0 5 0 5"/>
                     <Grid ShowGridLines="False">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
@@ -36,14 +36,14 @@
                             <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource FaseInfoStyle}" Text="ID :"/>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource FaseInfoStyle}" Text="ID :" />
                         <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource FaseInfoStyle}" Text="姓名 :" />
                         <TextBlock Grid.Column="0" Grid.Row="2" Style="{StaticResource FaseInfoStyle}" Text="部门 :" />
                         <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding UserInfo[0]}" />
                         <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding UserInfo[1]}" />
                         <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding UserInfo[2]}" />
                         <hc:LoadingCircle Grid.Column="2" Grid.RowSpan="3" Visibility="{Binding IsLoading, Converter={StaticResource boolToVi}}" />
-                        <Image Source="/Assets/Icon/success.png" Width="50" Grid.Column="2" Grid.RowSpan="3" Visibility="{Binding IsSuccess, Converter={StaticResource boolToVi}}"/>
+                        <Image Grid.Column="2" Grid.RowSpan="3" Source="/Assets/Icon/success.png" Visibility="{Binding IsSuccess, Converter={StaticResource boolToVi}}" Width="50" />
                         <!--<Canvas Grid.Column="2" Grid.RowSpan="3" Visibility="{Binding IsSuccess, Converter={StaticResource boolToVi}}">
                             <Ellipse Width="50" Height="50" Fill="Green" Canvas.Top="30" Canvas.Left="15"/>
                             <Path Stroke="White" StrokeThickness="3" Canvas.Top="35" Canvas.Left="20">
@@ -61,7 +61,12 @@
                                 </Path.Data>
                             </Path>
                         </Canvas>-->
-                        <TextBlock Grid.Column="2" Grid.RowSpan="3" FontWeight="Medium" Foreground="Red" TextWrapping="Wrap"  Text="{Binding ErrorTips}" />
+                        <TextBlock FontWeight="Medium"
+                                   Foreground="Red"
+                                   Grid.Column="2"
+                                   Grid.RowSpan="3"
+                                   Text="{Binding ErrorTips}"
+                                   TextWrapping="Wrap" />
                     </Grid>
                 </StackPanel>
             </TabItem>
@@ -102,7 +107,12 @@
                             Style="{StaticResource ButtonBaseStyle}"
                             Width="250" />
                     <TextBlock FontWeight="Medium" Foreground="Red" Grid.Row="3" Text="{Binding ErrorTips}" />
-                    <hc:LoadingLine Margin="100,0" DotDelayTime="2" DotInterval="20" DotSpeed="1" Grid.Row="3" Visibility="{Binding IsLoading, Converter={StaticResource boolToVi}}" />
+                    <hc:LoadingLine Margin="100,0"
+                                    DotDelayTime="2"
+                                    DotInterval="20"
+                                    DotSpeed="1"
+                                    Grid.Row="3"
+                                    Visibility="{Binding IsLoading, Converter={StaticResource boolToVi}}" />
                 </Grid>
             </TabItem>
         </TabControl>

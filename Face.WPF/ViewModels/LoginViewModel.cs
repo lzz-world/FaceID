@@ -20,6 +20,7 @@ using Face.WPF.Views;
 using System.Timers;
 using System.Windows.Forms;
 using static Face.WPF.Models.FaceModel;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Face.WPF.ViewModels
 {
@@ -61,20 +62,23 @@ namespace Face.WPF.ViewModels
                             long tick = DateTime.Now.Ticks;
                             while (!cts.IsCancellationRequested)
                             {
-                                Debug.WriteLine(Gl.faceID);
+                                Debug.WriteLine($"ScanID：{Gl.faceID}");
                                 if (Gl.faceID > -1)
                                 {
+                                    //PS:不知为何有几率faceID在登录时为-1
                                     IsLoading = false;
-                                    bool res = false;
-                                    _ = System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)(async () =>
+                                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
-                                        res = await Login(new HandyControl.Controls.PasswordBox());
-                                    }));
+                                        _ = Login(Gl.faceID);
+                                    });
                                     return;
                                 }
                                 else if (Gl.faceID < -1 || DateTime.Now.Ticks - tick > Gl.scanFaceTimeOut * 1_100_0000)
                                 {
-                                    ErrorTips = UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(Gl.faseReplyRes);
+                                    if (Gl.faseReplyRes == 0x00)
+                                        ErrorTips = "扫描超时";
+                                    else
+                                        ErrorTips = UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(Gl.faseReplyRes);
                                     IsLoading = false;
                                     await Task.Delay(3000);
                                     break;
@@ -106,8 +110,8 @@ namespace Face.WPF.ViewModels
             if (LoginTabIndex == 1)
             {
                 var passwordBox = parameter as HandyControl.Controls.PasswordBox;
-                var password = passwordBox.Password;
-                Password = password;
+                var password = passwordBox?.Password;
+                Password = password ?? string.Empty;
 
                 string errorMessage = UtilsHelper.ValidateProperty(this, "Account");
                 if (errorMessage != null) { ErrorTips = "工号：" + errorMessage; return false; }
@@ -116,12 +120,14 @@ namespace Face.WPF.ViewModels
             }
 
             List<UserModel> userInfos = DB.Fsql.Select<UserModel>().ToList();
+
             if (LoginTabIndex == 0)
             {
-                userInfos = DB.Fsql.Select<UserModel>().Where(w => w.FaseId.ToString() == Gl.faceID.ToString()).ToList();
+                Debug.WriteLine($"Login：{parameter}");
+                userInfos = userInfos.Where(w => w.FaseId.ToString() == parameter.ToString()).ToList();
                 if (userInfos.Count == 0)
                 {
-                    ErrorTips = "面部信息未匹配，请删除此面部信息再重新录入";
+                    ErrorTips = $"面部信息未匹配，请删除此面部ID[{parameter}]再重新录入";
                     return false;
                 }
             }

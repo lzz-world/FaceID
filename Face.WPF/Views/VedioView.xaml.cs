@@ -24,8 +24,6 @@ namespace Face.WPF.Views
         public VedioView()
         {
             InitializeComponent();
-
-            ViewModel.VedioView = this;
         }
     }
 }

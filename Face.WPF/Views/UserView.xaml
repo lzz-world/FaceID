@@ -7,6 +7,7 @@
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:Face.WPF.Views"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:view="clr-namespace:Face.WPF.Views"
              xmlns:vm="clr-namespace:Face.WPF.ViewModels">
     <UserControl.DataContext>
@@ -17,6 +18,7 @@
         <conv:UserInfoConverter x:Key="enumToStr" />
         <cons:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <conv:DataGridHeaderConverter x:Key="DataGridHeaderConverter" />
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
 
         <Style BasedOn="{StaticResource TabItemExWithUnderLineStyle}" TargetType="TabItem">
             <Setter Property="FontWeight" Value="Medium" />
@@ -82,7 +84,21 @@
                                             <DataGridTextColumn Binding="{Binding UserModel.Gender, Converter={StaticResource enumToStr}}" Header="性别" />
                                             <DataGridTextColumn Binding="{Binding UserModel.Department, Converter={StaticResource enumToStr}}" Header="部门" />
                                             <DataGridTextColumn Binding="{Binding UserModel.Position}" Header="职位" />
-                                            <DataGridTextColumn Binding="{Binding UserModel.Auth, Converter={StaticResource enumToStr}}" Header="头像" />
+                                            <DataGridTemplateColumn>
+                                                <DataGridTemplateColumn.Header>
+                                                    <TextBlock Text="头像" />
+                                                </DataGridTemplateColumn.Header>
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Background="Transparent" BorderBrush="Transparent" 
+                                                                Command="{Binding Path=DataContext.(vm:UserViewModel.ImageShowCommand), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" 
+                                                                CommandParameter="{Binding UserModel.Image}"
+                                                                Visibility="{Binding UserModel.Image, Converter={StaticResource NullToVisibilityConverter}}">
+                                                            <mah:BootstrapIcons Kind="Image" />
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
                                             <DataGridTextColumn Binding="{Binding UserModel.Auth, Converter={StaticResource enumToStr}}" Header="权限" />
                                             <DataGridTemplateColumn Header="编辑">
                                                 <DataGridTemplateColumn.CellTemplate>

@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NETFRAMEWORK;NET472;
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\App.xaml
-8486710786
+81166942150
 
-26698810168
+272056120152
 761258113759
-Assets\DataGridDictionary.xaml;Assets\TabControlDictionary.xaml;Views\ConsoleView.xaml;Views\DialogView\TipsWindow.xaml;Views\LoginView.xaml;Views\MainWindow.xaml;Views\UserView.xaml;Views\VedioView.xaml;
+Assets\DataGridDictionary.xaml;Assets\TabControlDictionary.xaml;Views\ConsoleView.xaml;Views\DialogView\ImageDialogView.xaml;Views\LoginView.xaml;Views\MainWindow.xaml;Views\UserView.xaml;Views\VedioView.xaml;
 
 False
 

@@ -33,7 +33,7 @@ namespace Face.WPF.Models
         public byte? FaseId { get; set; }
 
         [Column(IsNullable = true)]
-        public string? Image { get; set; }
+        public byte[]? Image { get; set; }
 
         public UserType Auth { get; set; }
 

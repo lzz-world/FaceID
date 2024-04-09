@@ -10,7 +10,7 @@
     <Compile Update="Views\ConsoleView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\DialogView\TipsWindow.xaml.cs">
+    <Compile Update="Views\DialogView\ImageDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\LoginView.xaml.cs">
@@ -33,7 +33,7 @@
     <Page Update="Views\ConsoleView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\DialogView\TipsWindow.xaml">
+    <Page Update="Views\DialogView\ImageDialogView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\LoginView.xaml">

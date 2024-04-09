@@ -23,6 +23,13 @@ using static Face.WPF.ViewModels.UserViewModel;
 using System.Security.Policy;
 using static Face.WPF.Models.FaceModel;
 using System.Diagnostics.Eventing.Reader;
+using System.ComponentModel;
+using System.Windows;
+using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
+using System.Windows.Media.Imaging;
+using Face.WPF.Views.DialogView;
 
 namespace Face.WPF.ViewModels
 {
@@ -121,7 +128,7 @@ namespace Face.WPF.ViewModels
                 string errorMessage = UtilsHelper.ValidateProperty(this, "UserName");
                 if (errorMessage != null)
                 {
-                    ErrorTips = "姓名：" + errorMessage;return;
+                    ErrorTips = "姓名：" + errorMessage; return;
                 }
 
                 List<MyUserModel> filterInfo = Users.Where(w => w.UserModel.Name == UserName).ToList();
@@ -151,7 +158,7 @@ namespace Face.WPF.ViewModels
                 }
                 else if (UserRegisterTabIndex == 0)
                 {
-                    if (Account != null)
+                    if (!string.IsNullOrWhiteSpace(Account))
                     {
                         errorMessage = UtilsHelper.ValidateProperty(this, "Account");
                         if (errorMessage != null) { ErrorTips = "工号：" + errorMessage; return; }
@@ -208,7 +215,7 @@ namespace Face.WPF.ViewModels
                     Gl.SerialWrite(13);
                     while (!cts.IsCancellationRequested)
                     {
-                        if (Gl.faceID > -1)
+                        if (Gl.faceID > -1 || Gl.faceID < -1)
                             return true;
                         await Task.Delay(100);
                     }
@@ -221,16 +228,23 @@ namespace Face.WPF.ViewModels
                     return false;
                 }
                 if (!fTask.Result) return false;
-                if (Gl.faseReplyRes != 0x00)
+                if (Gl.faceID == -1)
                 {
                     ErrorTips = UtilsHelper.GetEnumDescription<MID_REPLY_RES, byte>(Gl.faseReplyRes);
                     return false;
                 }
+                else if (Gl.faceID == -2)
+                {
+                    ErrorTips = "人脸已重复录入";
+                    return false;
+                }
 
                 FaseID = Gl.faceID;
+
                 userModel = new UserModel()
                 {
                     FaseId = (byte)Gl.faceID,
+                    Image = MainModel.imageBytes,
                     Name = UserName,
                     Gender = GenderIndex == 0 ? GenderType.Men : GenderType.Women,
                     Account = Account == null ? null : HashEncrypMD5.Md5Encrypt_Key(Account, HashEncrypMD5.Key),
@@ -242,6 +256,8 @@ namespace Face.WPF.ViewModels
                            AuthIndex == 2 ? UserType.Maintain : UserType.Visitor,
                     CreateTime = DateTime.Now,
                 };
+
+                MainModel.imageBytes = null;
             }
             DB.Fsql.Insert(userModel).ExecuteAffrows();
 
@@ -266,11 +282,12 @@ namespace Face.WPF.ViewModels
             DepartmentType department = DepartmentIndex == 0 ? DepartmentType.ProduceOne :
                                         DepartmentIndex == 1 ? DepartmentType.ProduceTwo : DepartmentType.ProduceThree;
             GenderType gender = GenderIndex == 0 ? GenderType.Men : GenderType.Women;
+            AccountEncrypMD5 = HashEncrypMD5.Md5Encrypt_Key(Account, HashEncrypMD5.Key);
 
             if (UserRegisterTabIndex == 1)
             {
-                AccountEncrypMD5 = HashEncrypMD5.Md5Encrypt_Key(Account, HashEncrypMD5.Key);
-                PwEncrypMD5 = HashEncrypMD5.Md5Encrypt_Key(Pw, HashEncrypMD5.Key);            }
+                PwEncrypMD5 = HashEncrypMD5.Md5Encrypt_Key(Pw, HashEncrypMD5.Key);
+            }
             else
             {
                 /*
@@ -323,6 +340,7 @@ namespace Face.WPF.ViewModels
                     {
                         Gl.faceUserID = (int)oldUserModel!.FaseId;
                         Gl.SerialWrite(8);
+                        DB.Fsql.Update<UserModel>().Set(s => s.FaseId, null).Where(w => w.FaseId == oldUserModel.FaseId);
                     }
                     Gl.SerialWrite(13);
                     while (!cts.IsCancellationRequested)
@@ -346,7 +364,6 @@ namespace Face.WPF.ViewModels
                     return false;
                 }
 
-                AccountEncrypMD5 = HashEncrypMD5.Md5Encrypt_Key(Account, HashEncrypMD5.Key);
                 FaseID = Gl.faceID;
             }
 
@@ -354,6 +371,7 @@ namespace Face.WPF.ViewModels
                 .Set(s => s.Account, HashEncrypMD5.Md5Encrypt_Key(Account, HashEncrypMD5.Key))
                 .Set(s => s.Auth, auth)
                 .Set(s => s.FaseId, (byte?)FaseID)
+                .Set(s => s.Image, MainModel.imageBytes)
                 .Set(s => s.Department, department)
                 .Set(s => s.Gender, gender)
                 .Set(s => s.Name, UserName)
@@ -363,7 +381,7 @@ namespace Face.WPF.ViewModels
                 .ExecuteAffrows();
             if (upRow != 1)
             {
-                ErrorTips = "数据库更新0";
+                ErrorTips = "数据库更新0行";
                 return false;
             }
 
@@ -383,10 +401,12 @@ namespace Face.WPF.ViewModels
                     Pssword = HashEncrypMD5.Md5Encrypt_Key(Pw, HashEncrypMD5.Key),
                     Id = oldUserModel.Id,
                     CreateTime = oldUserModel.CreateTime,
-                    Image = oldUserModel?.Image,
+                    Image = MainModel.imageBytes,
                     UpdateTime = oldUserModel.UpdateTime
                 }
             };
+
+            MainModel.imageBytes = null;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -451,10 +471,10 @@ namespace Face.WPF.ViewModels
 
         [RelayCommand]
         private void RegisterTabSelectionChanged()
-        { 
-            ErrorTips = string.Empty; 
-            cts?.Cancel(); 
-            IsRegisterSuccess = false; 
+        {
+            ErrorTips = string.Empty;
+            cts?.Cancel();
+            IsRegisterSuccess = false;
         }
 
         [RelayCommand]
@@ -500,12 +520,33 @@ namespace Face.WPF.ViewModels
             RePw = this.Pw;
         }
 
-        public partial class MyUserModel : ObservableObject
+        [RelayCommand] private void ImageShow(byte[] imageBytes)
         {
-            public UserModel UserModel { get; set; }
+            var imageSource = ImageHelper.ConvertToBitmapImage(imageBytes);
+            new ImageDialogView(imageSource)
+            {
+                Owner = App.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Topmost = App.Current.MainWindow.Topmost
+            }.ShowDialog();
+        }
+    }
 
-            [ObservableProperty]
-            private bool isCheck = false;
+    public class MyUserModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public UserModel UserModel { get; set; }
+
+        private bool isCheck = false;
+        public bool IsCheck
+        {
+            get => isCheck;
+            set
+            {
+                isCheck = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsCheck)));
+            }
         }
     }
 }
