@@ -13,7 +13,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:view="clr-namespace:Face.WPF.Views"
         xmlns:vm="clr-namespace:Face.WPF.ViewModels"
-        Title="MainWindow"
+        Title="FaceID"
         Background="{StaticResource BackgroupDefualt}"
         Closed="Window_Closed"
         Height="720"

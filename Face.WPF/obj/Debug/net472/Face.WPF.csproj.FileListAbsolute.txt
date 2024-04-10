@@ -85,3 +85,4 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.cspr
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.csproj.CopyComplete
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.exe
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF.pdb
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Debug\net472\Face.WPF_Content.g.cs

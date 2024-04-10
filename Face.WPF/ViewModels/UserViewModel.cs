@@ -257,8 +257,6 @@ namespace Face.WPF.ViewModels
                            AuthIndex == 2 ? UserType.Maintain : UserType.Visitor,
                     CreateTime = DateTime.Now,
                 };
-
-                MainModel.imageBytes = null;
             }
             DB.Fsql.Insert(userModel).ExecuteAffrows();
 
@@ -269,6 +267,7 @@ namespace Face.WPF.ViewModels
             {
                 Users.Add(new MyUserModel() { UserModel = userModel, IsCheck = false });
             });
+            MainModel.imageBytes = null;
             return true;
         }
 

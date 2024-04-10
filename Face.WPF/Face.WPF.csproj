@@ -6,6 +6,7 @@
     <Nullable>Enable</Nullable>
     <UseWPF>true</UseWPF>
 	<LangVersion>8.0</LangVersion>
+	<ApplicationIcon>Lego Head.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
@@ -27,6 +28,10 @@
     <None Remove="Assets\Icon\Head.png" />
     <None Remove="Assets\Icon\Head2.png" />
     <None Remove="Assets\Icon\success.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Lego Head.ico" />
   </ItemGroup>
 
   <ItemGroup>
