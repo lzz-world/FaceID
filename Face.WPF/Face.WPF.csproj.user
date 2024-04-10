@@ -19,7 +19,7 @@
     <Compile Update="Views\UserView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\VedioView.xaml.cs">
+    <Compile Update="Views\VideoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -45,7 +45,7 @@
     <Page Update="Views\UserView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\VedioView.xaml">
+    <Page Update="Views\VideoView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

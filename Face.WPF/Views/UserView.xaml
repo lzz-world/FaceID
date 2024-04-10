@@ -148,7 +148,7 @@
                                                                             <!--<Condition Binding="{Binding Path=SelectedIndex, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=TabControl,AncestorLevel=2}}" Value="1"/>-->
                                                                             <Condition Binding="{Binding Path=SelectedIndex, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabControl,AncestorLevel=1}}" Value="0"/>
                                                                         </MultiDataTrigger.Conditions>
-                                                                        <Setter Property="Content" Value="{x:Static utils:Gl.VedioView}"/>
+                                                                        <Setter Property="Content" Value="{x:Static utils:Gl.VideoView}"/>
                                                                     </MultiDataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -363,7 +363,7 @@
                     <Style TargetType="ContentControl">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=tabControl, Path=SelectedIndex}" Value="0">
-                                <Setter Property="Content" Value="{x:Static utils:Gl.VedioView}"/>
+                                <Setter Property="Content" Value="{x:Static utils:Gl.VideoView}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

@@ -171,7 +171,7 @@ namespace Face.WPF.ViewModels
                     tabIndex = 0;
                     MainWindow.Height = 755;
                     MainWindow.ScrView.Visibility = Visibility.Visible;
-                    VedioContentControl = Gl.VedioView;
+                    VedioContentControl = Gl.VideoView;
                     Gl.IsStartVedio = true;
                     break;
                 case UserType.Admin: tabIndex = 1; break;

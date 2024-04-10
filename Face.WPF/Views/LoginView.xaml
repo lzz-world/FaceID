@@ -24,7 +24,7 @@
         <TabControl Background="Transparent" BorderBrush="Transparent" Grid.Row="1" SelectedIndex="{Binding LoginTabIndex}" Style="{StaticResource TabControlStyle}">
             <TabItem Header="人脸识别登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
                 <StackPanel>
-                    <ContentControl Margin="0 5 0 5" Content="{x:Static utils:Gl.VedioView}"/>
+                    <ContentControl Margin="0 5 0 5" Content="{x:Static utils:Gl.VideoView}"/>
                     <Grid ShowGridLines="False">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />

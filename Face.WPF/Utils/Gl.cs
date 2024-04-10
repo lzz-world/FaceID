@@ -25,7 +25,7 @@ namespace Face.WPF.Utils
         public static int[] fasePos = new int[] { -1 };
         public static bool isCapture = false;
         public static bool IsStartVedio = false;
-        public static VedioView VedioView { get; } = new VedioView();
+        public static VideoView VideoView { get; } = new VideoView();
 
         public static Action closeVideo;
         public static Action<Bitmap> showImage;
