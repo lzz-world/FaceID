@@ -7,6 +7,7 @@
         xmlns:drawing="clr-namespace:System.Drawing;assembly=netstandard"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:utils="clr-namespace:Face.WPF.Utils"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:Face.WPF"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -582,18 +583,12 @@
                                             </TabItem>
                                         </TabControl>
                                         <StackPanel Margin="0 0 0 10" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
-                                            <Button Margin="0 0 10 0"
+                                            <Button 
                                                     Command="{Binding SerialSendCommand}"
                                                     Content="发 送"
                                                     DockPanel.Dock="Bottom"
                                                     Style="{StaticResource ButtonBaseStyle}"
                                                     Width="100" />
-                                            <ToggleButton x:Name="VeidoToggBtn" Style="{StaticResource ToggleBtnBaseStyle}">
-                                                <iconPacks:BootstrapIcons Kind="CameraVideo" />
-                                            </ToggleButton>
-                                            <Popup Focusable="True" IsOpen="{Binding IsChecked, ElementName=VeidoToggBtn, Mode=OneWay}" PlacementTarget="{Binding ElementName=VeidoToggBtn}">
-                                                <!--<view:VedioView/>-->
-                                            </Popup>
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>

@@ -42,12 +42,12 @@ namespace Face.WPF.ViewModels
         private string position;
         private string pw;
         private string rePw;
+        
         private CancellationTokenSource cts;
         private UserModel oldUserModel;
 
         public ObservableCollection<MyUserModel> Users { get; set; } = new ObservableCollection<MyUserModel>();
 
-        [ObservableProperty] private int userRegisterTabIndex = 1;
         [ObservableProperty] private int authIndex = 3;
         [ObservableProperty] private int genderIndex = 0;
         [ObservableProperty] private string errorTips;
@@ -55,6 +55,7 @@ namespace Face.WPF.ViewModels
         [ObservableProperty] private int? faseID;
         [ObservableProperty] private bool isRegisterSuccess = false;
         [ObservableProperty] private bool isRegisterProcess = false;
+        [ObservableProperty] private int userRegisterTabIndex = 1;
         [ObservableProperty] private string addText = ADD_USER;
 
         [Required(ErrorMessage = "请输入名字")]
@@ -520,7 +521,8 @@ namespace Face.WPF.ViewModels
             RePw = this.Pw;
         }
 
-        [RelayCommand] private void ImageShow(byte[] imageBytes)
+        [RelayCommand]
+        private void ImageShow(byte[] imageBytes)
         {
             var imageSource = ImageHelper.ConvertToBitmapImage(imageBytes);
             new ImageDialogView(imageSource)

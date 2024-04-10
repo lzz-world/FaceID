@@ -61,6 +61,7 @@ namespace Face.WPF.ViewModels
         [ObservableProperty] private string account;
         [ObservableProperty] private string password;
         [ObservableProperty] private Object contentControl;
+        [ObservableProperty] private Object vedioContentControl;
         [ObservableProperty] private string runningText;
         [ObservableProperty] private bool isHeartbeat = true;
         [ObservableProperty] private int userImageIndex = -1;
@@ -155,6 +156,7 @@ namespace Face.WPF.ViewModels
 
         private void Login(UserModel userModel)
         {
+            Gl.IsStartVedio = false;
             MainWindow.Width = 800;
             MainWindow.Height = 730;
             UserInfo[0] = userModel.Name;
@@ -169,6 +171,8 @@ namespace Face.WPF.ViewModels
                     tabIndex = 0;
                     MainWindow.Height = 755;
                     MainWindow.ScrView.Visibility = Visibility.Visible;
+                    VedioContentControl = Gl.VedioView;
+                    Gl.IsStartVedio = true;
                     break;
                 case UserType.Admin: tabIndex = 1; break;
                 case UserType.Operator: tabIndex = 2; break;

@@ -50,6 +50,7 @@ namespace Face.WPF.ViewModels
                 ErrorTips = String.Empty;
                 if (loginTabIndex == 0)
                 {
+                    Gl.IsStartVedio = true;
                     cts = new CancellationTokenSource();
                     _ = Task.Run(async () =>
                     {
@@ -92,6 +93,7 @@ namespace Face.WPF.ViewModels
                 }
                 else
                 {
+                    Gl.IsStartVedio = false;
                     cts.Cancel();
                     Gl.SerialWrite(0);
                     IsLoading = false;

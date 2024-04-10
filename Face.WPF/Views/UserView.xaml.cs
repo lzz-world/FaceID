@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Face.WPF.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,9 +40,13 @@ namespace Face.WPF.Views
             if (tabControl.SelectedIndex == 0)
             {
                 _mainWindow.ScrView.Visibility = Visibility.Visible;
+                Gl.IsStartVedio = true;
             }
+            else if (tabControl.SelectedIndex == 1)
+                Gl.IsStartVedio = true;
             else
             {
+                Gl.IsStartVedio = false;
                 _mainWindow.ScrView.Visibility = Visibility.Hidden;
             }
         }

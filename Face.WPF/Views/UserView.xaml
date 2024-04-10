@@ -6,6 +6,7 @@
              xmlns:dps="clr-namespace:Face.WPF.Utils.DPropertys"
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:utils="clr-namespace:Face.WPF.Utils"
              xmlns:local="clr-namespace:Face.WPF.Views"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:view="clr-namespace:Face.WPF.Views"
@@ -20,6 +21,7 @@
         <conv:DataGridHeaderConverter x:Key="DataGridHeaderConverter" />
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <conv:BytesToImageConverter x:Key="BytesToImageConverter" />
+        <conv:IntToBoolConverter x:Key="IntToBoolConverter"/>
 
         <Style BasedOn="{StaticResource TabItemExWithUnderLineStyle}" TargetType="TabItem">
             <Setter Property="FontWeight" Value="Medium" />
@@ -137,7 +139,21 @@
                                         <TabItem Header="{Binding AddText, Converter={StaticResource DataGridHeaderConverter}, ConverterParameter=Face}" Style="{StaticResource TabItemExWithUnderLineStyle}">
                                             <StackPanel>
                                                 <Grid Margin="0,0,0,3">
-                                                    <view:VedioView />
+                                                    <ContentControl>
+                                                        <ContentControl.Style>
+                                                            <Style BasedOn="{StaticResource BaseStyle}" TargetType="ContentControl">
+                                                                <Style.Triggers>
+                                                                    <MultiDataTrigger>
+                                                                        <MultiDataTrigger.Conditions>
+                                                                            <!--<Condition Binding="{Binding Path=SelectedIndex, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=TabControl,AncestorLevel=2}}" Value="1"/>-->
+                                                                            <Condition Binding="{Binding Path=SelectedIndex, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabControl,AncestorLevel=1}}" Value="0"/>
+                                                                        </MultiDataTrigger.Conditions>
+                                                                        <Setter Property="Content" Value="{x:Static utils:Gl.VedioView}"/>
+                                                                    </MultiDataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </ContentControl.Style>
+                                                    </ContentControl>
                                                 </Grid>
                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="False">
                                                     <Grid.ColumnDefinitions>
@@ -151,7 +167,7 @@
                                                         <RowDefinition />
                                                         <RowDefinition />
                                                         <RowDefinition />
-                                                    </Grid.RowDefinitions>
+                                                    </Grid.RowDefinitions> 
                                                     <Grid.Resources>
                                                         <Style BasedOn="{StaticResource TextBoxBaseStyle}" TargetType="TextBox">
                                                             <Setter Property="FontWeight" Value="Medium" />
@@ -215,15 +231,6 @@
                                                            Source="/Assets/Icon/success.png"
                                                            Visibility="{Binding IsRegisterSuccess, Converter={StaticResource BoolToVisibility}}"
                                                            Width="40" />
-                                                    <!--<CheckBox HorizontalAlignment="Center"
-                                                              Background="Green"
-                                                              BorderBrush="Green"
-                                                              Grid.Column="2"
-                                                              Grid.Row="1"
-                                                              Grid.RowSpan="3"
-                                                              IsChecked="{Binding IsRegisterSuccess}"
-                                                              Style="{StaticResource CheckBoxBaseStyle}"
-                                                              Visibility="{Binding IsRegisterSuccess, Converter={StaticResource BoolToVisibility}}" />-->
                                                     <Button Margin="10,0"
                                                             HorizontalAlignment="Stretch"
                                                             Command="{Binding UserRegisterCommand}"
@@ -331,14 +338,6 @@
                                                         Style="{StaticResource ButtonBaseStyle}" />
                                                 <TextBlock FontWeight="Medium" Foreground="Red" Grid.Column="1" Grid.Row="9" Text="{Binding ErrorTips}" />
                                                 <Image Grid.Column="1" Grid.Row="9" Source="/Assets/Icon/success.png" Visibility="{Binding IsRegisterSuccess, Converter={StaticResource BoolToVisibility}}" />
-                                                <!--<CheckBox HorizontalAlignment="Center"
-                                                          Background="Green"
-                                                          BorderBrush="Green"
-                                                          Grid.Column="1"
-                                                          Grid.Row="9"
-                                                          IsChecked="{Binding IsRegisterSuccess}"
-                                                          Style="{StaticResource CheckBoxBaseStyle}"
-                                                          Visibility="{Binding IsRegisterSuccess, Converter={StaticResource BoolToVisibility}}" />-->
                                             </Grid>
                                         </TabItem>
                                     </TabControl>
@@ -358,5 +357,18 @@
                 <TextBlock Margin="300,0,0,0" FontSize="50" Foreground="White" Text="访客" />
             </TabItem>
         </TabControl>
+        <Popup Focusable="True" Placement="Left" IsOpen="{Binding SelectedIndex, ElementName=tabControl, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}" PlacementTarget="{Binding ElementName=tabControl}">
+            <ContentControl>
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=tabControl, Path=SelectedIndex}" Value="0">
+                                <Setter Property="Content" Value="{x:Static utils:Gl.VedioView}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </Popup>
     </Grid>
 </UserControl>

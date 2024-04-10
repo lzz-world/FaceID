@@ -10,6 +10,7 @@ using Face.WPF.Models;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
+using Face.WPF.Views;
 
 namespace Face.WPF.Utils
 {
@@ -21,8 +22,10 @@ namespace Face.WPF.Utils
         public static int scanFaceTimeOut = 10;
         public static byte faseReplyRes = 0x00;
         public static int faseState = 0;
-        public static int[] fasePos = new int[8];
+        public static int[] fasePos = new int[] { -1 };
         public static bool isCapture = false;
+        public static bool IsStartVedio = false;
+        public static VedioView VedioView { get; } = new VedioView();
 
         public static Action closeVideo;
         public static Action<Bitmap> showImage;
