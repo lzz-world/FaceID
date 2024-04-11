@@ -54,15 +54,24 @@ namespace Face.WPF.ViewModels
                     cts = new CancellationTokenSource();
                     _ = Task.Run(async () =>
                     {
-                        if (Gl.faseState == 0) { ErrorTips = "请检查串口连接"; }
+                        FaceLoginTask:
                         while (!cts.IsCancellationRequested)
                         {
+
                             IsLoading = true;
                             ErrorTips = string.Empty;
                             Gl.SerialWrite(2);
                             long tick = DateTime.Now.Ticks;
                             while (!cts.IsCancellationRequested)
                             {
+                                if (Gl.faseState == 0) 
+                                {
+                                    IsLoading = false;
+                                    ErrorTips = "请检查串口连接";
+                                    await Task.Delay(3000);
+                                    goto FaceLoginTask; 
+                                }
+
                                 Debug.WriteLine($"ScanID：{Gl.faceID}");
                                 if (Gl.faceID > -1)
                                 {
