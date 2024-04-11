@@ -7,8 +7,8 @@
     <UserControl.DataContext>
         <vm:VedioViewModel x:Name="ViewModel" />
     </UserControl.DataContext>
-    <Grid >
-        <Image Source="{Binding ImageSource}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="480"/>
+    <Grid>
+        <Image Source="{Binding ImageSource}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="320" MinHeight="480"/>
         <!--<WindowsFormsHost HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Height="240">
             <wf:PictureBox x:Name="videoBox" />
         </WindowsFormsHost>-->

@@ -65,7 +65,6 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\Dialo
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\LoginView.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\MainWindow.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\UserView.g.cs
-F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\VedioView.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\App.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\GeneratedInternalTypeHelper.g.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Face.WPF_MarkupCompile.cache
@@ -76,7 +75,6 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\Dialo
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\LoginView.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\MainWindow.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\UserView.baml
-F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\VedioView.baml
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Face.WPF.g.resources
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Face.WPF.GeneratedMSBuildEditorConfig.editorconfig
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Face.WPF.AssemblyInfoInputs.cache
@@ -86,3 +84,5 @@ F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Face.WPF.cs
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Face.WPF.exe
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Face.WPF.pdb
 F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Face.WPF_Content.g.cs
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\VideoView.g.cs
+F:\TestProject\MyProgram\CJ\WPF\Face.WPF\Face.WPF\obj\Release\net472\Views\VideoView.baml
