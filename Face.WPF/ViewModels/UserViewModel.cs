@@ -42,7 +42,7 @@ namespace Face.WPF.ViewModels
         private string position;
         private string pw;
         private string rePw;
-        
+
         private CancellationTokenSource cts;
         private UserModel oldUserModel;
 
@@ -106,15 +106,19 @@ namespace Face.WPF.ViewModels
 
         public UserViewModel()
         {
+            Gl.RefreshUserInfos = RefreshUserInfos;
+            RefreshUserInfos();
+        }
+
+        private void RefreshUserInfos()
+        {
+            Users.Clear();
             List<UserModel>? allUser = DB.Fsql.Select<UserModel>().ToList();
-            List<MyUserModel> myUsers = new List<MyUserModel>();
             foreach (var item in allUser)
             {
                 item.Account = item.Account == null ? null : HashEncrypMD5.Md5Decrypt(item.Account, HashEncrypMD5.Key);
-                myUsers.Add(new MyUserModel() { UserModel = item, IsCheck = false });
+                Users.Add(new MyUserModel() { UserModel = item, IsCheck = false });
             }
-
-            Users = new ObservableCollection<MyUserModel>(myUsers);
         }
 
         [RelayCommand]
@@ -242,6 +246,13 @@ namespace Face.WPF.ViewModels
 
                 FaseID = Gl.faceID;
 
+                //图像数据为空，防止数据库无数据
+                while (MainModel.imageBytes == null)
+                {
+                    Gl.isCapture = true;
+                    await Task.Delay(500); 
+                }
+
                 userModel = new UserModel()
                 {
                     FaseId = (byte)Gl.faceID,
@@ -365,6 +376,12 @@ namespace Face.WPF.ViewModels
                 }
 
                 FaseID = Gl.faceID;
+                //图像数据为空，防止数据库无数据
+                while (MainModel.imageBytes == null)
+                {
+                    Gl.isCapture = true;
+                    await Task.Delay(500);
+                }
             }
 
             var upRow = DB.Fsql.Update<UserModel>()
@@ -406,14 +423,13 @@ namespace Face.WPF.ViewModels
                 }
             };
 
-            MainModel.imageBytes = null;
-
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Users.RemoveAt(listIndex);
                 Users.Insert(listIndex, myUserModel);
             });
             this.oldUserModel = myUserModel.UserModel;
+            MainModel.imageBytes = null;
             return true;
         }
 

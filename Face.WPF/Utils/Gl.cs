@@ -37,5 +37,6 @@ namespace Face.WPF.Utils
         public static SerialPort MySerialPort { get; set; }
         public static Action<int> SerialWrite { get; set; }
         public static Action<UserModel> Login { get; set; }
+        public static Action RefreshUserInfos { get; set; }
     }
 }

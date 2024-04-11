@@ -29,6 +29,8 @@ using System.Diagnostics;
 using System.Security;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using HandyControl.Controls;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace Face.WPF.ViewModels
 {
@@ -126,7 +128,8 @@ namespace Face.WPF.ViewModels
 
         public MainViewModel()
         {
-            Gl.closeVideo = () => videoSource?.Stop();
+            Gl.closeVideo = ShutCameara;
+
             Gl.Login = Login;
 
             // 获取可用摄像头设备列表
@@ -212,7 +215,7 @@ namespace Face.WPF.ViewModels
         {
             Task.Run(() =>
             {
-                videoSource?.Stop();
+                ShutCameara();
                 videoSource = new VideoCaptureDevice(videoDevices[VideoIndex].MonikerString);
                 videoSource.NewFrame += MainModel.NewFrame;
                 videoSource.Start();
@@ -406,9 +409,34 @@ namespace Face.WPF.ViewModels
                 //0x20 删除指定用户
                 case 8:
                     byte[] userID = BitConverter.GetBytes(UserID);
-                    bytesBuff = new byte[] { MID_DELUSER, 0x00, 0x02, userID[1], userID[0] }; break;
+                    bytesBuff = new byte[] { MID_DELUSER, 0x00, 0x02, userID[1], userID[0] };
+                    var userCount = DB.Fsql.Select<UserModel>().Where(w => w.FaseId == UserID).Count();
+                    if (userCount > 0)
+                        if (MessageBox.Show($"是否删除面部ID[{UserID}] ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        { 
+                            DB.Fsql.Delete<UserModel>().Where(w => w.FaseId == UserID).ExecuteAffrows();
+                            Gl.RefreshUserInfos();
+                        }
+                        else
+                        {
+                            Gl.PrintLogColor("删除指定用户操作取消", Brushes.Yellow, null);
+                            return;
+                        }
+                    break;
                 //0x21 删除全部用户
-                case 9: bytesBuff = new byte[] { MID_DELALL, 0x00, 0x00 }; break;
+                case 9: 
+                    bytesBuff = new byte[] { MID_DELALL, 0x00, 0x00 };
+                    if (MessageBox.Show("是否删除全部面部ID ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    { 
+                        DB.Fsql.Delete<UserModel>().Where(w => w.FaseId > 0).ExecuteAffrows();
+                        Gl.RefreshUserInfos();
+                    }
+                    else
+                    {
+                        Gl.PrintLogColor("删除全部用户操作取消", Brushes.Yellow, null);
+                        return;
+                    }
+                    break;
                 //0x22 获取用户信息
                 case 10:
                     userID = BitConverter.GetBytes(UserID);
@@ -733,6 +761,16 @@ namespace Face.WPF.ViewModels
 
             MainWindow.Left = (screenWidth - MainWindow.Width) / 2;
             MainWindow.Top = (screenHeight - MainWindow.Height) / 2;
+        }
+
+        private void ShutCameara()
+        {
+            if (videoSource != null)
+            {
+                videoSource.SignalToStop();
+                videoSource.Stop();
+                videoSource = null;
+            }
         }
     }
 }

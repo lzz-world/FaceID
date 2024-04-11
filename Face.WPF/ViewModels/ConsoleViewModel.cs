@@ -85,7 +85,6 @@ namespace Face.WPF.ViewModels
                     ConsoleView.FlowDocument.Blocks.Remove(ConsoleView.FlowDocument.Blocks.FirstBlock);
                 }
 
-                
                 Run text = new Run(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:") + DateTime.Now.Millisecond.ToString().PadLeft(3, '0') + "    " + msg)
                 {
                     Foreground = foreground ?? Brushes.Black,

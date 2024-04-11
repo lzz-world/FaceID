@@ -18,7 +18,8 @@ namespace Face.WPF.ViewModels
 
         public VedioViewModel()
         {
-            Gl.showImage = bitmap => Application.Current.Dispatcher.BeginInvoke(new Action(() => ImageSource = ImageHelper.ConvertToBitmapImage(bitmap)));
+            //Gl.showImage = bitmap => Application.Current.Dispatcher.BeginInvoke(new Action(() => ImageSource = ImageHelper.ConvertToBitmapImage(bitmap)));
+            Gl.showImage = bitmap => Application.Current.Dispatcher.Invoke(() => ImageSource = ImageHelper.ConvertToBitmapImage(bitmap));
         }
     }
 }

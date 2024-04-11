@@ -4,9 +4,9 @@
              xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
              xmlns:dps="clr-namespace:Face.WPF.Utils.DPropertys"
              xmlns:hc="https://handyorg.github.io/handycontrol"
-             xmlns:utils="clr-namespace:Face.WPF.Utils"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:Face.WPF.Views"
+             xmlns:utils="clr-namespace:Face.WPF.Utils"
              xmlns:view="clr-namespace:Face.WPF.Views"
              xmlns:vm="clr-namespace:Face.WPF.ViewModels">
     <UserControl.DataContext>
@@ -24,7 +24,7 @@
         <TabControl Background="Transparent" BorderBrush="Transparent" Grid.Row="1" SelectedIndex="{Binding LoginTabIndex}" Style="{StaticResource TabControlStyle}">
             <TabItem Header="人脸识别登录" Style="{StaticResource TabItemExWithUnderLineStyle}">
                 <StackPanel>
-                    <ContentControl Margin="0 5 0 5" Content="{x:Static utils:Gl.VideoView}"/>
+                    <ContentControl Margin="0,5,0,5" Content="{x:Static utils:Gl.VideoView}" />
                     <Grid ShowGridLines="False">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />

@@ -29,9 +29,9 @@ namespace Face.WPF.Views
 
             _mainWindow = mainWindow;
 
-            this.tabControl.SelectedIndex = tabIndex;
+            this.UserTabControl.SelectedIndex = tabIndex;
             if (tabIndex == 0)
-                this.tabControl.Tag = "Visible";
+                this.UserTabControl.Tag = "Visible";
         }
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -43,7 +43,9 @@ namespace Face.WPF.Views
                 Gl.IsStartVedio = true;
             }
             else if (tabControl.SelectedIndex == 1)
+            {
                 Gl.IsStartVedio = true;
+            }
             else
             {
                 Gl.IsStartVedio = false;

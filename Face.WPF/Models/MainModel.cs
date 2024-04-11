@@ -15,6 +15,9 @@ namespace Face.WPF.Models
 {
     public class MainModel
     {
+        static Color borderColor = Color.Yellow;
+        static Color starColor = Color.Red;
+
         private const int POINT_COUNT = 10;
         public static int imageRotateFlipIndex = 5;
         public static byte[]? imageBytes;
@@ -43,17 +46,20 @@ namespace Face.WPF.Models
             }
 
             //固定轮廓框
-            for (int i = 0; i < 20; i++)
+            for (int k = 0; k < 3; k++)
             {
-                bitmap.SetPixel(80, 120 + i, Color.White);
-                bitmap.SetPixel(80, 340 + i, Color.White);
-                bitmap.SetPixel(240, 120 + i, Color.White);
-                bitmap.SetPixel(240, 340 + i, Color.White);
+                for (int i = 0; i < 20; i++)
+                {
+                    bitmap.SetPixel(80 - k, 120 + i, borderColor);
+                    bitmap.SetPixel(80 - k, 340 + i, borderColor);
+                    bitmap.SetPixel(240 + k, 120 + i, borderColor);
+                    bitmap.SetPixel(240 + k, 340 + i, borderColor);
 
-                bitmap.SetPixel(80 + i, 120, Color.White);
-                bitmap.SetPixel(220 + i, 120, Color.White);
-                bitmap.SetPixel(80 + i, 360, Color.White);
-                bitmap.SetPixel(220 + i, 360, Color.White);
+                    bitmap.SetPixel(80 + i, 120 - k, borderColor);
+                    bitmap.SetPixel(220 + i, 120 - k, borderColor);
+                    bitmap.SetPixel(80 + i, 360 + k, borderColor);
+                    bitmap.SetPixel(220 + i, 360 + k, borderColor);
+                }
             }
 
             if (Gl.fasePos.Sum() - Gl.fasePos[0] > 0)
@@ -70,18 +76,19 @@ namespace Face.WPF.Models
                     int x = Gl.fasePos[1] - w + i > 319 ? 319 : Gl.fasePos[1] - w + i;
                     int y = Gl.fasePos[2] - w + i > 479 ? 479 : Gl.fasePos[2] - h + i;
 
-                    bitmap.SetPixel(x, Gl.fasePos[2], Color.Red);
-                    bitmap.SetPixel(Gl.fasePos[1], y, Color.Red);
+                    bitmap.SetPixel(x, Gl.fasePos[2], starColor);
+                    bitmap.SetPixel(Gl.fasePos[1], y, starColor);
                 }
             }
 
             if (!isAutoClearPos && Gl.fasePos[0] == 0)
             {
                 isAutoClearPos = true;
-                Task.Run(async () => { 
-                    await Task.Delay(10000); 
+                Task.Run(async () =>
+                {
+                    await Task.Delay(10000);
                     Gl.fasePos = new int[] { -1 };
-                    isAutoClearPos = false; 
+                    isAutoClearPos = false;
                 });
             }
 

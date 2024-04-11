@@ -29,19 +29,19 @@
 
     </UserControl.Resources>
     <Grid Margin="0,0,0,0">
-        <TabControl x:Name="tabControl"
+        <TabControl x:Name="UserTabControl"
                     Background="Transparent"
                     BorderBrush="Transparent"
                     BorderThickness="0"
                     SelectionChanged="tabControl_SelectionChanged"
                     Style="{StaticResource BaseStyle}"
                     Tag="Collapsed">
-            <TabItem Header="超级管理员" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+            <TabItem Header="超级管理员" Visibility="{Binding ElementName=UserTabControl, Path=Tag}">
                 <Border BorderBrush="{StaticResource UserBackgroupBrush}" BorderThickness="1" CornerRadius="5">
                     <view:ConsoleView />
                 </Border>
             </TabItem>
-            <TabItem Header="管理员" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+            <TabItem Header="管理员" Visibility="{Binding ElementName=UserTabControl, Path=Tag}">
                 <StackPanel>
                     <hc:DrawerContainer Grid.Row="1">
                         <StackPanel Orientation="Horizontal">
@@ -347,22 +347,22 @@
                     </hc:DrawerContainer>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="操作员" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+            <TabItem Header="操作员" Visibility="{Binding ElementName=UserTabControl, Path=Tag}">
                 <TextBlock Margin="300,0,0,0" FontSize="50" Foreground="White" Text="操作员" />
             </TabItem>
-            <TabItem Header="维护员" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+            <TabItem Header="维护员" Visibility="{Binding ElementName=UserTabControl, Path=Tag}">
                 <TextBlock Margin="300,0,0,0" FontSize="50" Foreground="White" Text="维护" />
             </TabItem>
-            <TabItem Header="访客" Visibility="{Binding ElementName=tabControl, Path=Tag}">
+            <TabItem Header="访客" Visibility="{Binding ElementName=UserTabControl, Path=Tag}">
                 <TextBlock Margin="300,0,0,0" FontSize="50" Foreground="White" Text="访客" />
             </TabItem>
         </TabControl>
-        <Popup Focusable="True" Placement="Left" IsOpen="{Binding SelectedIndex, ElementName=tabControl, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}" PlacementTarget="{Binding ElementName=tabControl}">
+        <Popup Focusable="True" Placement="Left" IsOpen="{Binding SelectedIndex, ElementName=UserTabControl, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}" PlacementTarget="{Binding ElementName=UserTabControl}">
             <ContentControl>
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=tabControl, Path=SelectedIndex}" Value="0">
+                            <DataTrigger Binding="{Binding ElementName=UserTabControl, Path=SelectedIndex}" Value="0">
                                 <Setter Property="Content" Value="{x:Static utils:Gl.VideoView}"/>
                             </DataTrigger>
                         </Style.Triggers>

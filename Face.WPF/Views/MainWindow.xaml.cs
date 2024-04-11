@@ -13,6 +13,7 @@ using Face.WPF.Views;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Controls;
+using System.Diagnostics;
 
 namespace Face.WPF
 {
@@ -32,7 +33,7 @@ namespace Face.WPF
                 this.Topmost = this.Topmost ? false : true;
                 UpBtn.Foreground = this.Topmost ? brush : this.CloseBtn.Foreground;
             };
-            this.MinBtn.Click += (s, e) => this.WindowState = WindowState.Minimized ;
+            this.MinBtn.Click += (s, e) => this.WindowState = WindowState.Minimized;
             this.MaxBtn.Click += (s, e) => this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
             this.CloseBtn.Click += (s, e) => Application.Current.Shutdown();
             this.SetBtn.Click += (s, e) =>
@@ -54,8 +55,17 @@ namespace Face.WPF
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            Gl.closeVideo();
             Gl.MySerialPort?.Close();
+            //Gl.closeVideo();
+            Process currentProcess = Process.GetCurrentProcess();
+            try
+            {
+                currentProcess.Kill();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("程序关闭失败，请手动关闭进程");
+            }
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
