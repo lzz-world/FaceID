@@ -255,7 +255,7 @@ namespace Face.WPF.ViewModels
 
                 userModel = new UserModel()
                 {
-                    FaseId = (byte)Gl.faceID,
+                    FaseId = FaseID,
                     Image = MainModel.imageBytes,
                     Name = UserName,
                     Gender = GenderIndex == 0 ? GenderType.Men : GenderType.Women,
@@ -408,7 +408,7 @@ namespace Face.WPF.ViewModels
                 IsCheck = false,
                 UserModel = new UserModel()
                 {
-                    FaseId = (byte?)FaseID,
+                    FaseId = FaseID,
                     Account = Account,
                     Auth = auth,
                     Department = department,

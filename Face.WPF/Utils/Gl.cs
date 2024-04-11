@@ -25,11 +25,12 @@ namespace Face.WPF.Utils
         public static int[] fasePos = new int[] { -1 };
         public static bool isCapture = false;
         public static bool IsStartVedio = false;
-        public static VideoView VideoView { get; } = new VideoView();
-
         public static Action closeVideo;
         public static Action<Bitmap> showImage;
 
+        public static int ImageWidth { get; set; } = 320;
+        public static int ImageHeight { get; set; } = 480;
+        public static VideoView VideoView { get; } = new VideoView();
 
         public static Action<string> PrintLog { get; set; } = new Action<string>(str => { });
         public static Action<string, System.Windows.Media.Brush?, System.Windows.Media.Brush?> PrintLogColor { get; set; } = new Action<string, System.Windows.Media.Brush?, System.Windows.Media.Brush?>((str, b, f) => { });

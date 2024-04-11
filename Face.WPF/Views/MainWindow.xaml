@@ -205,6 +205,22 @@
                                 </i:Interaction.Triggers>
                             </ListBox>
                         </Expander>
+                        <Expander Header="视频分辨率">
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="宽"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="高"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=(utils:Gl.ImageWidth), UpdateSourceTrigger=LostFocus}" Margin="0 0 0 3"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=(utils:Gl.ImageHeight), UpdateSourceTrigger=LostFocus}"/>
+                            </Grid>
+                        </Expander>
                         <Expander Header="图像旋转">
                             <ListBox ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedIndex="{Binding ImageRotateFlipIndex}">
                                 <ListBoxItem>无旋转无翻转</ListBoxItem>

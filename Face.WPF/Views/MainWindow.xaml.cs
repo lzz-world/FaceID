@@ -42,7 +42,7 @@ namespace Face.WPF
                 ScrView.Visibility = ScrView.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                 this.SetBtn.Foreground = ScrView.Visibility == Visibility.Visible ? brush : this.CloseBtn.Foreground;
                 if (this.contentControl.Content is LoginView)
-                    this.Width = this.Width == 330 ? 520 : 330;
+                    this.Width = this.Width == 330 ? 525 : 330;
             };
 
             serialPort.ItemsSource = SerialPort.GetPortNames();

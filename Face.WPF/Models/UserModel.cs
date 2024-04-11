@@ -30,7 +30,7 @@ namespace Face.WPF.Models
         public string? Pssword { get; set; }
 
         [Column(IsNullable = true)]
-        public byte? FaseId { get; set; }
+        public int? FaseId { get; set; }
 
         [Column(IsNullable = true)]
         public byte[]? Image { get; set; }

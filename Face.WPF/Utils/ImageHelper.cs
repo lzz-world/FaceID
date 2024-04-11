@@ -108,7 +108,7 @@ namespace Face.WPF.Utils
         public static BitmapImage ConvertToBitmapImage(Bitmap bitmap, ImageFormat? imageFormat = null)
         {
             if (imageFormat == null)
-                imageFormat = ImageFormat.Png;
+                imageFormat = ImageFormat.Jpeg;
 
             using (MemoryStream memory = new MemoryStream())
             {
